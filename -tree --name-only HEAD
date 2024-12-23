@@ -1,0 +1,11 @@
+[33mcommit 1be58039eb903a1fdd183b63bd653816a187defc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mproduct-entities[m[33m, [m[1;31morigin/product-entities[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: VIPIN <vipin.p@opsmonsters.in>
+Date:   Mon Dec 23 13:19:32 2024 +0530
+
+    Added product-related entities
+
+[33mcommit a2459340998c727657a26cd2b866ce94fe03bff3[m
+Author: Gershon Kumar <gershonkumar@live.com>
+Date:   Mon Dec 23 10:13:54 2024 +0530
+
+    init commit
