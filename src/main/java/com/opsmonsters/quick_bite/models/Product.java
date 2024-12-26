@@ -1,17 +1,29 @@
-package com.opsmonsters.quick_bite.model;
+package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "products")
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id")
     private Long productId;
 
+    @Column(name = "name", nullable = false)
     private String name;
-    private Double MRP;
+
+    @Column(name = "mrp", nullable = false)
+    private Double mrp;
+
+    @Column(name = "discount")
     private Double discount;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "about")
     private String aboutThisItem;
 
 
@@ -31,12 +43,12 @@ public class Product {
         this.name = name;
     }
 
-    public Double getMRP() {
-        return MRP;
+    public Double getMrp() {
+        return mrp;
     }
 
-    public void setMRP(Double MRP) {
-        this.MRP = MRP;
+    public void setMrp(Double mrp) {
+        this.mrp = mrp;
     }
 
     public Double getDiscount() {
@@ -44,22 +56,6 @@ public class Product {
     }
 
     public void setDiscount(Double discount) {
-        this.discount = discount;
-    }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAboutThisItem() {
-        return aboutThisItem;
-    }
-
-    public void setAboutThisItem(String aboutThisItem) {
-        this.aboutThisItem = aboutThisItem;
     }
 }
