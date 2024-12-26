@@ -1,18 +1,24 @@
-package com.opsmonsters.quick_bite.model;
+package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "product_attributes")
 public class ProductAttribute {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_attribute_id")
     private Long productAttributeId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(name = "attribute_name", nullable = false)
     private String attributeName;
+
+    @Column(name = "attribute_value", nullable = false)
     private String attributeValue;
 
 
