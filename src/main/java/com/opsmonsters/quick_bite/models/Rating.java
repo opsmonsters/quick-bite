@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.model;
+package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
 
