@@ -1,26 +1,30 @@
-package com.opsmonsters.quick_bite.model;
+package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "product_images")
 public class ProductImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long imageId;
+    @Column(name = "product_image_id")
+    private Long productImageId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
 
-    public Long getImageId() {
-        return imageId;
+    public Long getProductImageId() {
+        return productImageId;
     }
 
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
+    public void setProductImageId(Long productImageId) {
+        this.productImageId = productImageId;
     }
 
     public Product getProduct() {

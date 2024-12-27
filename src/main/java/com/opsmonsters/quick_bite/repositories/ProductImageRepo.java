@@ -1,6 +1,6 @@
-package com.opsmonsters.quick_bite.repository;
+package com.opsmonsters.quick_bite.repositories;
 
-import com.opsmonsters.quick_bite.model.ProductImage;
+import com.opsmonsters.quick_bite.models.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,19 +1,27 @@
-package com.opsmonsters.quick_bite.model;
+package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
 
 @Entity
-public class Rating {
+@Table(name = "product_reviews")
+public class ProductReview {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rating_id")
     private Long ratingId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(name = "rating", nullable = false)
     private Integer rating;
+
+    @Column(name = "review", nullable = false, columnDefinition = "TEXT")
     private String review;
+
+    @Column(name = "image_url")
     private String imageUrl;
 
 
