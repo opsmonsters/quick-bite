@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 public class AuthServices implements UserDetailsService {
 
     @Autowired
-    private UserRepo userRepo;
+    UserRepo userRepo;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtServices jwtService;
+    JwtServices jwtService;
 
     public AuthServices(UserRepo userRepo,
                         PasswordEncoder passwordEncoder,

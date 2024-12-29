@@ -3,6 +3,7 @@ package com.opsmonsters.quick_bite.Configurations;
 import com.opsmonsters.quick_bite.Services.AuthServices;
 import com.opsmonsters.quick_bite.Services.JwtServices;
 import com.opsmonsters.quick_bite.models.Users;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ import java.io.IOException;
 private final HandlerExceptionResolver handlerExceptionResolver;
 
 private final JwtServices jwtService;
-private final AuthServices detailsService;
+private final AuthServices authService;
 
 public JwtAuthenticationFilter(
         JwtServices jwtService,
@@ -26,7 +27,7 @@ public JwtAuthenticationFilter(
         HandlerExceptionResolver handlerExceptionResolver
 ) {
     this.jwtService = jwtService;
-    this.detailsService = detailsService;
+    this.authService = detailsService;
     this.handlerExceptionResolver = handlerExceptionResolver;
 }
 

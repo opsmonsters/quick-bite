@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 
 import java.util.Collection;
-import java.util.Collections;
+
 import java.util.Date;
 import java.util.List;
 
@@ -16,25 +16,25 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
@@ -55,6 +55,10 @@ public class Users implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public Long getUserId() {
