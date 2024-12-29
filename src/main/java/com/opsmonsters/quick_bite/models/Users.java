@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -51,7 +52,10 @@ public class Users implements UserDetails {
         this.updatedAt = new Date();
     }
 
-    // Getters and setters
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
 
     public Long getUserId() {
         return userId;
@@ -130,10 +134,6 @@ public class Users implements UserDetails {
 
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
-    }
 
     @Override
     public boolean isAccountNonExpired() {

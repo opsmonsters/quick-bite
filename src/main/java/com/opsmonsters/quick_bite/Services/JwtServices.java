@@ -1,5 +1,7 @@
 package com.opsmonsters.quick_bite.Services;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -13,8 +15,7 @@ public class JwtServices {
 
     private final String SECRET_KEY = "1234hjksl_24567839hjkkkskx_ljhhhh";
 
-    public String generateToken(String userName) {
-        Map<String, Object> claims = new HashMap<>();
+    public String generateToken(Map<String, Object> claims, String userName) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userName)
