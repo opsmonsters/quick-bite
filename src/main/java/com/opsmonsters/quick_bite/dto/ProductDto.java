@@ -1,31 +1,12 @@
-package com.opsmonsters.quick_bite.models;
+package com.opsmonsters.quick_bite.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "products")
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+public class ProductDto {
     private Long productId;
-
-    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "mrp", nullable = false)
     private Double mrp;
-
-    @Column(name = "discount")
     private Double discount;
-
-    @Column(name = "description")
     private String description;
-
-    @Column(name = "about")
     private String about;
-
 
     public Long getProductId() {
         return productId;
