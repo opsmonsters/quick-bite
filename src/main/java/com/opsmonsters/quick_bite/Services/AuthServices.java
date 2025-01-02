@@ -1,7 +1,8 @@
 package com.opsmonsters.quick_bite.Services;
 
 import com.opsmonsters.quick_bite.models.UserDetails;
-import com.opsmonsters.quick_bite.repositories.UserDetailsRepo;
+import com.opsmonsters.quick_bite.models.Users;
+import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ public class AuthServices {
 
 
     @Autowired
-    UserDetailsRepo userRepo;
+    UserRepo userRepo;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -18,10 +19,10 @@ public class AuthServices {
     @Autowired
     JwtServices jwtService;
 
-        public AuthServices(UserDetailsRepo userRepo,
-                           PasswordEncoder passwordEncoder,
-                           JwtServices jwtService,
-                           AuthenticationManager authenticationManager) {
+        public AuthServices(UserRepo userRepo,
+                            PasswordEncoder passwordEncoder,
+                            JwtServices jwtService,
+                            AuthenticationManager authenticationManager) {
             this.userRepo = userRepo;
             this.passwordEncoder = passwordEncoder;
             this.jwtService = jwtService;
@@ -39,10 +40,10 @@ public class AuthServices {
                     new UsernamePasswordAuthenticationToken(email, password)
             );
 
-            UserDetails userDetails = userRepo.findByEmail(email)
+            Users userDetails = userRepo.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             return jwtService.generateToken(userDetails);
         }
     }
 
-}
+

@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "users")
-public class UserDetails {
+public class Users implements UserDetails {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long userId;
@@ -48,7 +48,11 @@ public class UserDetails {
     protected void onUpdate() {
         updatedAt = new Date();
     }
-
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
+        this.password = password;
+    }
     public Long getUserId() {
         return userId;
     }

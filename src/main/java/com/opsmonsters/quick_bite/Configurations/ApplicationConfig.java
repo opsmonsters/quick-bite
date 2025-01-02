@@ -1,7 +1,7 @@
 package com.opsmonsters.quick_bite.Configurations;
 
 import com.opsmonsters.quick_bite.Services.AuthServices;
-import com.opsmonsters.quick_bite.repositories.UserDetailsRepo;
+import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,9 +10,9 @@ public class ApplicationConfig {
 
 
 
-        private final UserDetailsRepo userRepo;
+        private final UserRepo userRepo;
 
-        public ApplicationConfig(UserDetailsRepo userRepo) {
+        public ApplicationConfig(UserRepo userRepo) {
             this.userRepo = userRepo;
         }
 
