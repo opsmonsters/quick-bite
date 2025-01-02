@@ -1,6 +1,10 @@
 package com.opsmonsters.quick_bite.models;
 
+
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -9,35 +13,36 @@ import java.util.Date;
 @Entity
 @Table(name = "users")
 public class Users implements UserDetails {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long userId;
 
-        @Column(name = "first_name")
-        private String firstName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
-        @Column(name = "last_name")
-        private String lastName;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-        @Column(name = "email")
-        private String email;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
-        @Column(name = "password")
-        private String password;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-        @Column(name = "phone_number")
-        private String phoneNumber;
+    @Column(name = "password", nullable = false)
+    private String password;
 
-        @Column(name = "profile_image_url")
-        private String profileImageUrl;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-        @Column(name = "created_at")
-        @Temporal(TemporalType.TIMESTAMP)
-        private Date createdAt;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
 
-        @Column(name = "updated_at")
-        @Temporal(TemporalType.TIMESTAMP)
-        private Date updatedAt;
+    @Column(name = "created_at", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
 
     @PrePersist
     protected void onCreate() {
@@ -48,11 +53,7 @@ public class Users implements UserDetails {
     protected void onUpdate() {
         updatedAt = new Date();
     }
-    public void setPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(password);
-        this.password = password;
-    }
+
     public Long getUserId() {
         return userId;
     }
@@ -75,14 +76,6 @@ public class Users implements UserDetails {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getEmail() {
@@ -113,17 +106,15 @@ public class Users implements UserDetails {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -134,10 +125,12 @@ public class Users implements UserDetails {
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
         return email;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -159,4 +152,8 @@ public class Users implements UserDetails {
     }
 
 
+    public int getStatusCode() {
+
+        return 0;
+    }
 }
