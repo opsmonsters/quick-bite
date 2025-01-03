@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.Dto;
+package com.opsmonsters.quick_bite.dto;
 
 import java.util.Date;
 
