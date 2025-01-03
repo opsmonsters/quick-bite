@@ -1,6 +1,6 @@
 package com.opsmonsters.quick_bite.Controllers;
 
-import com.opsmonsters.quick_bite.Dto.ResponseDto;
+import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.Services.UserServices;
 import com.opsmonsters.quick_bite.models.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    public ResponseEntity<ResponseDto> getUserByEmail(@RequestParam String email) {
+    public ResponseEntity<Users> getUserByEmail(@RequestParam String email) {
         Users response = userServices.getUserByEmail(email);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
