@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.Services;
+package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
@@ -24,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("Loading user by username: {}", username);
 
-
         Users user = userRepo.findByEmail(username)
                 .orElseThrow(() -> {
                     logger.warn("User not found with email: {}", username);
@@ -37,9 +36,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRoles().stream()
-                        .map(Role::getName)
-                        .toArray(String[]::new))
+                .roles(user.getRole())
                 .build();
     }
+
 }

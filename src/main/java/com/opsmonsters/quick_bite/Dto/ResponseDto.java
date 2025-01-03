@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.Dto;
+package com.opsmonsters.quick_bite.dto;
 
 import java.util.Date;
 
@@ -14,6 +14,12 @@ public class ResponseDto {
 
     public ResponseDto(int statusCode, Object data) {
         this.statusCode = statusCode;
+        this.data = data;
+    }
+
+    public ResponseDto(int statusCode, String message, Object data) {
+        this.statusCode = statusCode;
+        this.message = message;
         this.data = data;
     }
 
@@ -183,4 +189,3 @@ public class ResponseDto {
         }
     }
 }
-

@@ -1,8 +1,8 @@
 package com.opsmonsters.quick_bite.Configurations;
 
-import com.opsmonsters.quick_bite.Services.JwtServices;
-import com.opsmonsters.quick_bite.Services.UserServices;
 import com.opsmonsters.quick_bite.models.Users;
+import com.opsmonsters.quick_bite.services.JwtServices;
+import com.opsmonsters.quick_bite.services.UserServices;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,6 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtServices jwtService;
     private final UserServices userServices;
 
+    // Constructor injection for services
     public JwtAuthenticationFilter(JwtServices jwtService, UserServices userServices) {
         this.jwtService = jwtService;
         this.userServices = userServices;
@@ -61,12 +62,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Users userDetails = userServices.getUserByEmail(userEmail);
 
-                if (userDetails != null && jwtService.isTokenValid(jwt, userDetails)) {
+                if (userDetails != null && jwtService.isTokenValid(jwt, String.valueOf(userDetails))) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
                             userDetails.getAuthorities()
                     );
+
+                    // Corrected claim extraction
+                    String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
+
+                    // Now we can set role or any other logic to manage the authorities
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
