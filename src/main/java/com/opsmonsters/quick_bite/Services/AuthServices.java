@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.Services;
+package com.opsmonsters.quick_bite.services;
 
 
 import com.opsmonsters.quick_bite.models.Users;
@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 @Service
 public class AuthServices {
 
@@ -41,7 +40,9 @@ public class AuthServices {
         userRepo.save(user);
 
         logger.info("User registered successfully with email: {}", user.getEmail());
-        return jwtService.generateToken(String.valueOf(user));
+
+        // Pass both the email and the role (e.g., "USER") to generate the token
+        return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
     public String authenticate(String email, String password) {
@@ -60,6 +61,8 @@ public class AuthServices {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         logger.info("Authentication successful for email: {}", email);
-        return jwtService.generateToken(String.valueOf(user));
+
+        // Pass both the email and the role (e.g., "USER") to generate the token
+        return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 }
