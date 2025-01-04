@@ -1,8 +1,9 @@
-package com.opsmonsters.quick_bite.Services;
+package com.opsmonsters.quick_bite.services;
 
-import com.opsmonsters.quick_bite.Dto.ResponseDto;
+import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
