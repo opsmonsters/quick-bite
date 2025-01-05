@@ -7,18 +7,20 @@ public class ResponseDto {
     private String message;
     private Object data;
 
+    public ResponseDto(int statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
+    }
+
+    public ResponseDto(int statusCode, Object data) {
+        this.statusCode = statusCode;
+        this.data = data;
+    }
+
     public ResponseDto(int statusCode, String message, Object data) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;
-    }
-
-    public ResponseDto(int statusCode, String message) {
-        this(statusCode, message, null);
-    }
-
-    public ResponseDto(int statusCode, Object data) {
-        this(statusCode, null, data);
     }
 
     public int getStatusCode() {
@@ -44,7 +46,6 @@ public class ResponseDto {
     public void setData(Object data) {
         this.data = data;
     }
-
     public static class Builder {
         private int statusCode;
         private String message;
@@ -91,19 +92,27 @@ public class ResponseDto {
     public static class UserDto {
         private Long userId;
 
+
         private String firstName;
+
 
         private String lastName;
 
+
         private String email;
+
 
         private String password;
 
+
         private String phoneNumber;
+
 
         private String profileImageUrl;
 
+
         private Date createdAt;
+
 
         private Date updatedAt;
 

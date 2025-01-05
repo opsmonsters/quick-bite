@@ -9,20 +9,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 @Service
 public class AuthServices {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JwtServices jwtService;
+    private final com.opsmonsters.quick_bite.services.JwtServices jwtService;
     private final AuthenticationManager authenticationManager;
     private static final Logger logger = LoggerFactory.getLogger(AuthServices.class);
 
     public AuthServices(
             UserRepo userRepo,
             PasswordEncoder passwordEncoder,
-            JwtServices jwtService,
+            com.opsmonsters.quick_bite.services.JwtServices jwtService,
             AuthenticationManager authenticationManager) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
@@ -41,7 +40,9 @@ public class AuthServices {
         userRepo.save(user);
 
         logger.info("User registered successfully with email: {}", user.getEmail());
-        return jwtService.generateToken(String.valueOf(user));
+
+
+        return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
     public String authenticate(String email, String password) {
@@ -60,6 +61,8 @@ public class AuthServices {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         logger.info("Authentication successful for email: {}", email);
-        return jwtService.generateToken(String.valueOf(user));
+
+
+        return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 }
