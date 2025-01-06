@@ -1,6 +1,5 @@
 package com.opsmonsters.quick_bite.models;
 
-
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,7 @@ public class Users implements UserDetails {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -36,7 +35,7 @@ public class Users implements UserDetails {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     private String role;
 
     @Column(name = "created_at")
@@ -50,25 +49,34 @@ public class Users implements UserDetails {
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
+        if (role == null || role.isEmpty()) {
+            role = "user";
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
     }
-    public Users(Long userId, Date createdAt, String email, String firstName, String lastName, String password,
-                 String phoneNumber, String profileImageUrl, String role, Date updatedAt) {
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.email = email;
+
+
+
+    public Users() {
+
+    }
+
+    public Users(String firstName, String lastName, String email, String password, String phoneNumber, String profileImageUrl, String role) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
+        this.email = email;
+        this.password = new BCryptPasswordEncoder().encode(password);
         this.phoneNumber = phoneNumber;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
-        this.updatedAt = updatedAt;
     }
+
+
+
     public Long getUserId() {
         return userId;
     }
@@ -93,20 +101,21 @@ public class Users implements UserDetails {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
     }
 
     public String getPhoneNumber() {
@@ -125,7 +134,6 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
     }
 
-
     public String getRole() {
         return role;
     }
@@ -138,26 +146,20 @@ public class Users implements UserDetails {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         return Collections.emptyList();
     }
+
     @Override
     public String getUsername() {
         return email;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -177,6 +179,4 @@ public class Users implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }

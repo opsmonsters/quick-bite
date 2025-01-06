@@ -45,14 +45,7 @@ public class UserServices {
         try {
             List<UserDto> userDto = userRepo.findAll().stream()
                     .map(user -> new UserDto(
-                            user.getUserId(),
-                            user.getFirstName(),
-                            user.getLastName(),
-                            user.getEmail(),
-                            user.getPhoneNumber(),
-                            user.getProfileImageUrl(),
-                            user.getCreatedAt(),
-                            user.getUpdatedAt()))
+                    ))
                     .collect(Collectors.toList());
             return new ResponseDto(200, userDto);
         } catch (Exception e) {
