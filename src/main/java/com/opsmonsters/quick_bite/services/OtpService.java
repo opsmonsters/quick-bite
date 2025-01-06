@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.Services;
+package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.models.Otp;

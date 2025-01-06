@@ -1,6 +1,6 @@
-package com.opsmonsters.quick_bite.Controllers;
+package com.opsmonsters.quick_bite.controller;
 
-import com.opsmonsters.quick_bite.Services.OtpService;
+import com.opsmonsters.quick_bite.services.OtpService;
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
