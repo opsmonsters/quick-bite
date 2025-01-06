@@ -1,5 +1,4 @@
-package com.opsmonsters.quick_bite.Services;
-
+package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
@@ -15,14 +14,14 @@ public class AuthServices {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JwtServices jwtService;
+    private final com.opsmonsters.quick_bite.Services.JwtServices jwtService;
     private final AuthenticationManager authenticationManager;
     private static final Logger logger = LoggerFactory.getLogger(AuthServices.class);
 
     public AuthServices(
             UserRepo userRepo,
             PasswordEncoder passwordEncoder,
-            JwtServices jwtService,
+            com.opsmonsters.quick_bite.Services.JwtServices jwtService,
             AuthenticationManager authenticationManager) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
