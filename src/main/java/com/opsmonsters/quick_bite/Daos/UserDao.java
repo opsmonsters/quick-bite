@@ -1,3 +1,4 @@
+
 package com.opsmonsters.quick_bite.Daos;
 
 import com.opsmonsters.quick_bite.models.Users;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserDao {
@@ -18,12 +20,12 @@ public class UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Users getUserById(long userId) {
+    public Optional<Users> getUserById(long userId) {
         try {
-            return entityManager.find(Users.class, userId);
+            return Optional.ofNullable(entityManager.find(Users.class, userId));
         } catch (Exception e) {
             logger.error("Error retrieving user with ID {}: {}", userId, e.getMessage());
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -32,7 +34,7 @@ public class UserDao {
             return entityManager.createQuery("SELECT u FROM Users u", Users.class).getResultList();
         } catch (Exception e) {
             logger.error("Error retrieving all users: {}", e.getMessage());
-            return List.of(); // Return an empty list if an error occurs
+            return List.of();
         }
     }
 
@@ -46,7 +48,6 @@ public class UserDao {
                 if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.getEmail());
                 if (updatedUser.getPhoneNumber() != null) existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
                 if (updatedUser.getProfileImageUrl() != null) existingUser.setProfileImageUrl(updatedUser.getProfileImageUrl());
-
                 entityManager.merge(existingUser);
                 logger.info("User updated successfully: ID {}", userId);
             } else {
@@ -60,9 +61,10 @@ public class UserDao {
     @Transactional
     public void deleteUser(long userId) {
         try {
-            Users user = entityManager.find(Users.class, userId);
-            if (user != null) {
-                entityManager.remove(user);
+            int deleted = entityManager.createQuery("DELETE FROM Users u WHERE u.id = :userId")
+                    .setParameter("userId", userId)
+                    .executeUpdate();
+            if (deleted > 0) {
                 logger.info("User deleted successfully: ID {}", userId);
             } else {
                 logger.warn("User with ID {} not found for deletion.", userId);

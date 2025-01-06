@@ -14,14 +14,14 @@ public class AuthServices {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JwtServices jwtService;
+    private final com.opsmonsters.quick_bite.services.JwtServices jwtService;
     private final AuthenticationManager authenticationManager;
     private static final Logger logger = LoggerFactory.getLogger(AuthServices.class);
 
     public AuthServices(
             UserRepo userRepo,
             PasswordEncoder passwordEncoder,
-            JwtServices jwtService,
+            com.opsmonsters.quick_bite.services.JwtServices jwtService,
             AuthenticationManager authenticationManager) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
@@ -41,7 +41,7 @@ public class AuthServices {
 
         logger.info("User registered successfully with email: {}", user.getEmail());
 
-        // Pass both the email and the role (e.g., "USER") to generate the token
+
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
@@ -62,7 +62,7 @@ public class AuthServices {
 
         logger.info("Authentication successful for email: {}", email);
 
-        // Pass both the email and the role (e.g., "USER") to generate the token
+
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 }

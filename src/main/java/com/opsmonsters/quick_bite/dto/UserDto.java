@@ -12,6 +12,17 @@ public class UserDto {
     private String profileImageUrl;
     private Date createdAt;
     private Date updatedAt;
+    public UserDto(Long userId, String firstName, String lastName, String email, String phoneNumber,
+                   String profileImageUrl, Date createdAt, Date updatedAt) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.profileImageUrl = profileImageUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
     public Long getUserId() {
         return userId;
     }

@@ -39,7 +39,7 @@ public class SecurityFilter {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/signup", "/auth/login").permitAll()
+                        .requestMatchers("/admin/users", "/auth/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER")
                 )
