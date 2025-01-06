@@ -1,6 +1,5 @@
 package com.opsmonsters.quick_bite.services;
 
-
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.slf4j.Logger;
@@ -9,19 +8,20 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 @Service
 public class AuthServices {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JwtServices jwtService;
+    private final com.opsmonsters.quick_bite.Services.JwtServices jwtService;
     private final AuthenticationManager authenticationManager;
     private static final Logger logger = LoggerFactory.getLogger(AuthServices.class);
 
     public AuthServices(
             UserRepo userRepo,
             PasswordEncoder passwordEncoder,
-            JwtServices jwtService,
+            com.opsmonsters.quick_bite.Services.JwtServices jwtService,
             AuthenticationManager authenticationManager) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
@@ -40,9 +40,7 @@ public class AuthServices {
         userRepo.save(user);
 
         logger.info("User registered successfully with email: {}", user.getEmail());
-
-        // Pass both the email and the role (e.g., "USER") to generate the token
-        return jwtService.generateToken(user.getEmail(), user.getRole());
+        return jwtService.generateToken(String.valueOf(user));
     }
 
     public String authenticate(String email, String password) {
@@ -61,8 +59,6 @@ public class AuthServices {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         logger.info("Authentication successful for email: {}", email);
-
-        // Pass both the email and the role (e.g., "USER") to generate the token
-        return jwtService.generateToken(user.getEmail(), user.getRole());
+        return jwtService.generateToken(String.valueOf(user));
     }
 }
