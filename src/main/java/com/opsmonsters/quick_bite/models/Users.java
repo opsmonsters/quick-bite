@@ -39,6 +39,9 @@ public class Users implements UserDetails {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "otp_verified")
+    private boolean otpVerified;
+
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -122,6 +125,14 @@ public class Users implements UserDetails {
         this.role = role;
     }
 
+    public boolean isOtpVerified() {
+        return otpVerified;
+    }
+
+    public void setOtpVerified(boolean otpVerified) {
+        this.otpVerified = otpVerified;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -137,6 +148,7 @@ public class Users implements UserDetails {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 

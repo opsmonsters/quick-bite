@@ -41,7 +41,6 @@ public class AuthServices {
 
         logger.info("User registered successfully with email: {}", user.getEmail());
 
-        // Pass both the email and the role (e.g., "USER") to generate the token
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
@@ -60,9 +59,14 @@ public class AuthServices {
         Users user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!user.isOtpVerified()) {
+            logger.warn("User with email {} has not verified their OTP", email);
+            throw new RuntimeException("User has not verified OTP. Please verify OTP to login.");
+        }
+
         logger.info("Authentication successful for email: {}", email);
 
-        // Pass both the email and the role (e.g., "USER") to generate the token
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
+
 }
