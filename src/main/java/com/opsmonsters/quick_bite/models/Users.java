@@ -18,6 +18,7 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -132,6 +133,16 @@ public class Users implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    private Boolean isOtpVerified = false;
+    
+    public Boolean getIsOtpVerified() {
+        return isOtpVerified;
+    }
+
+    public void setIsOtpVerified(Boolean isOtpVerified) {
+        this.isOtpVerified = isOtpVerified;
     }
 
     public Date getCreatedAt() {
