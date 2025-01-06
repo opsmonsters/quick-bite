@@ -56,7 +56,19 @@ public class Users implements UserDetails {
     protected void onUpdate() {
         updatedAt = new Date();
     }
-
+    public Users(Long userId, Date createdAt, String email, String firstName, String lastName, String password,
+                 String phoneNumber, String profileImageUrl, String role, Date updatedAt) {
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.profileImageUrl = profileImageUrl;
+        this.role = role;
+        this.updatedAt = updatedAt;
+    }
     public Long getUserId() {
         return userId;
     }

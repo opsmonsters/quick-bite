@@ -1,6 +1,7 @@
 package com.opsmonsters.quick_bite.dto;
 
 import java.util.Date;
+import java.util.List;
 
 public class ResponseDto {
     private int statusCode;
@@ -46,6 +47,7 @@ public class ResponseDto {
     public void setData(Object data) {
         this.data = data;
     }
+
     public static class Builder {
         private int statusCode;
         private String message;
@@ -91,29 +93,13 @@ public class ResponseDto {
 
     public static class UserDto {
         private Long userId;
-
-
         private String firstName;
-
-
         private String lastName;
-
-
         private String email;
-
-
         private String password;
-
-
         private String phoneNumber;
-
-
         private String profileImageUrl;
-
-
         private Date createdAt;
-
-
         private Date updatedAt;
 
         public Long getUserId() {

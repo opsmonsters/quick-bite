@@ -1,13 +1,14 @@
 package com.opsmonsters.quick_bite.services;
-
 import com.opsmonsters.quick_bite.dto.ResponseDto;
+import com.opsmonsters.quick_bite.dto.UserDto;
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServices {
@@ -42,7 +43,18 @@ public class UserServices {
 
     public ResponseDto getAllUsers() {
         try {
-            return new ResponseDto(200, userRepo.findAll());
+            List<UserDto> userDto = userRepo.findAll().stream()
+                    .map(user -> new UserDto(
+                            user.getUserId(),
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getEmail(),
+                            user.getPhoneNumber(),
+                            user.getProfileImageUrl(),
+                            user.getCreatedAt(),
+                            user.getUpdatedAt()))
+                    .collect(Collectors.toList());
+            return new ResponseDto(200, userDto);
         } catch (Exception e) {
             return new ResponseDto(500, "Error occurred while retrieving users: " + e.getMessage());
         }
