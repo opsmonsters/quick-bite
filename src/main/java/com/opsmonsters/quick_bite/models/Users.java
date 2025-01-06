@@ -36,7 +36,10 @@ public class Users implements UserDetails {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "role")
+    private String role;
+
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
@@ -78,6 +81,14 @@ public class Users implements UserDetails {
         this.lastName = lastName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -102,35 +113,39 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
     }
 
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(password);
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         return Collections.emptyList();
     }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
     @Override
     public String getUsername() {
         return email;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -152,8 +167,4 @@ public class Users implements UserDetails {
     }
 
 
-    public int getStatusCode() {
-
-        return 0;
-    }
 }

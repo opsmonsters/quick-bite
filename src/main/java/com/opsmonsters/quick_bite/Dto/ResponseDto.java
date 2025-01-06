@@ -17,6 +17,12 @@ public class ResponseDto {
         this.data = data;
     }
 
+    public ResponseDto(int statusCode, String message, Object data) {
+        this.statusCode = statusCode;
+        this.message = message;
+        this.data = data;
+    }
+
     public int getStatusCode() {
         return statusCode;
     }
@@ -183,4 +189,3 @@ public class ResponseDto {
         }
     }
 }
-
