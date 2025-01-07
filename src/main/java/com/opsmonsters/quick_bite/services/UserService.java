@@ -55,6 +55,7 @@ public class UserService {
                 }).collect(Collectors.toList());
     }
 
+
     public ResponseDto getUserById(Long userId) {
         Optional<Users> userOptional = userRepo.findById(userId);
         if (userOptional.isPresent()) {
