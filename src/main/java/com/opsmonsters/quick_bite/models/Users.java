@@ -4,13 +4,12 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
 @Entity
-@Table(name = "users", schema = "quickbite")
+@Table(name = "users")
 public class Users implements UserDetails {
 
     @Id
