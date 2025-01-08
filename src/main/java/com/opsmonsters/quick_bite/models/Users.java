@@ -1,11 +1,9 @@
 package com.opsmonsters.quick_bite.models;
 
-
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -47,6 +45,13 @@ public class Users implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date resetTokenExpiry;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -56,19 +61,9 @@ public class Users implements UserDetails {
     protected void onUpdate() {
         updatedAt = new Date();
     }
-    public Users(Long userId, Date createdAt, String email, String firstName, String lastName, String password,
-                 String phoneNumber, String profileImageUrl, String role, Date updatedAt) {
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.profileImageUrl = profileImageUrl;
-        this.role = role;
-        this.updatedAt = updatedAt;
-    }
+
+
+
     public Long getUserId() {
         return userId;
     }
@@ -125,7 +120,6 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
     }
 
-
     public String getRole() {
         return role;
     }
@@ -149,15 +143,33 @@ public class Users implements UserDetails {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Date getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(Date resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         return Collections.emptyList();
     }
+
     @Override
     public String getUsername() {
         return email;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -177,6 +189,4 @@ public class Users implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }
