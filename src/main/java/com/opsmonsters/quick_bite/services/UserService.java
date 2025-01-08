@@ -30,6 +30,14 @@ public class UserService {
             user.setPassword(dto.getPassword());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
+
+
+            if (dto.getRole() == null || dto.getRole().isEmpty()) {
+                user.setRole("USER");
+            } else {
+                user.setRole(dto.getRole());
+            }
+
             userRepo.save(user);
 
             return new ResponseDto(201, "User created successfully!");
@@ -50,6 +58,7 @@ public class UserService {
                     dto.setPassword(user.getPassword());
                     dto.setPhoneNumber(user.getPhoneNumber());
                     dto.setProfileImageUrl(user.getProfileImageUrl());
+                    dto.setRole(user.getRole());
                     dto.setCreatedAt(user.getCreatedAt());
                     dto.setUpdatedAt(user.getUpdatedAt());
                     return dto;
@@ -75,6 +84,11 @@ public class UserService {
             user.setEmail(dto.getEmail());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
+
+            if (dto.getRole() != null && !dto.getRole().isEmpty()) {
+                user.setRole(dto.getRole());
+            }
+
             userRepo.save(user);
             return new ResponseDto(200, "User updated successfully!");
         } else {

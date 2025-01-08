@@ -1,19 +1,14 @@
 package com.opsmonsters.quick_bite.services;
 
-import com.opsmonsters.quick_bite.dto.ResponseDto;
-import com.opsmonsters.quick_bite.dto.LoginDto;
+
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
 @Service
 public class AuthServices {
 
@@ -34,15 +29,12 @@ public class AuthServices {
         this.authenticationManager = authenticationManager;
     }
 
-
     public String register(Users user) {
         logger.info("Registering user with email: {}", user.getEmail());
-
 
         if (userRepo.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
-
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
@@ -53,12 +45,10 @@ public class AuthServices {
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
-
     public String authenticate(String email, String password) {
         logger.info("Authenticating user with email: {}", email);
 
         try {
-
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
@@ -67,9 +57,14 @@ public class AuthServices {
             throw new RuntimeException("Invalid username or password");
         }
 
-
         Users user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        logger.info("Authentication successful for email: {}", email);
+        if (!user.getIsOtpVerified()) {
+            logger.error("User with email {} has not verified OTP", email);
+            throw new RuntimeException("Please verify your OTP before logging in.");
+        }
 
         logger.info("Authentication successful for email: {}", email);
 
@@ -108,4 +103,20 @@ public class AuthServices {
 
 
     }
+}
+
+            Users user = userOptional.get();
+            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole()); // Adjusted
+
+            return new ResponseDto(200, jwtToken);
+
+        } catch (BadCredentialsException badCredentials) {
+            return new ResponseDto(403, "Username / password is incorrect");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDto(500, "An Internal Error occurred");
+        }
+    }
+
+
 }

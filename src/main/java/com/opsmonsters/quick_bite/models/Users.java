@@ -1,6 +1,6 @@
 package com.opsmonsters.quick_bite.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,6 +47,12 @@ public class Users implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @Column(name = "is_otp_verified")
+    private Boolean isOtpVerified = false;
+
+    @Column(name = "reset_token")
+    private String resetToken;  // Add this field for the reset token
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -59,20 +65,18 @@ public class Users implements UserDetails {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
-        hashPassword();
     }
 
-    private void hashPassword() {
-        if (password != null && !password.startsWith("$2a$")) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            this.password = encoder.encode(password);
-        }
-    }
 
     public Users() {
     }
 
-    public Users(String firstName, String lastName, String email, String password, String phoneNumber, String profileImageUrl, String role) {
+
+    public Users(Long userId, Date createdAt, String email, String firstName, String lastName, String password,
+                 String phoneNumber, String profileImageUrl, String role, Date updatedAt, Boolean isOtpVerified, String resetToken) {
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -80,9 +84,10 @@ public class Users implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
+        this.updatedAt = updatedAt;
+        this.isOtpVerified = isOtpVerified != null ? isOtpVerified : false; // Ensure proper initialization
+        this.resetToken = resetToken;  // Initialize reset token
     }
-
-
     public Long getUserId() {
         return userId;
     }
@@ -107,21 +112,20 @@ public class Users implements UserDetails {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
-        hashPassword();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhoneNumber() {
@@ -140,6 +144,7 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
     }
 
+
     public String getRole() {
         return role;
     }
@@ -152,21 +157,43 @@ public class Users implements UserDetails {
         return createdAt;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsOtpVerified() {
+        return isOtpVerified;
+    }
+
+    public void setIsOtpVerified(Boolean isOtpVerified) {
+        this.isOtpVerified = isOtpVerified;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         return Collections.emptyList();
     }
-
     @Override
     public String getUsername() {
         return email;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -186,4 +213,6 @@ public class Users implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

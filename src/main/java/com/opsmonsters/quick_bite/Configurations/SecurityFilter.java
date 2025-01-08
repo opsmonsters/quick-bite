@@ -13,6 +13,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -23,7 +24,7 @@ public class SecurityFilter {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${cors.allowedOrigins}")
-    private String allowedOrigins;
+    private String[] allowedOrigins;
 
     public SecurityFilter(
             AuthenticationProvider authenticationProvider,
@@ -38,15 +39,23 @@ public class SecurityFilter {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/users", "/auth/login").permitAll()
+
+                        .requestMatchers("/auth/login", "/admin/users", "/products").permitAll()
+
+                        .requestMatchers("/admin/product/tags/**").permitAll()
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().hasRole("USER")
+
+                        .anyRequest().authenticated()
                 )
+
                 .sessionManagement(sess -> sess
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
@@ -57,8 +66,7 @@ public class SecurityFilter {
         CorsConfiguration configuration = new CorsConfiguration();
 
 
-        String[] origins = allowedOrigins.split(",");
-        configuration.setAllowedOrigins(List.of(origins));
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
