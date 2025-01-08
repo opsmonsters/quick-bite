@@ -1,8 +1,11 @@
 package com.opsmonsters.quick_bite.models;
 
+
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -35,6 +38,9 @@ public class Users implements UserDetails {
 
     @Column(name = "role")
     private String role;
+
+    @Column(name = "otp_verified")
+    private boolean otpVerified;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -138,6 +144,7 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
     }
 
+
     public String getRole() {
         return role;
     }
@@ -180,14 +187,13 @@ public class Users implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         return Collections.emptyList();
     }
-
     @Override
     public String getUsername() {
         return email;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -207,4 +213,6 @@ public class Users implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
