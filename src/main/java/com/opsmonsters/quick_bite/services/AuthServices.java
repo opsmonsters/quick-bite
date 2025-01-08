@@ -80,29 +80,32 @@ public class AuthServices {
 
     public ResponseDto userLogin(LoginDto dto) {
         try {
-
+            logger.info("Attempting to login with username: {}", dto.getUsername());
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     dto.getUsername(),
                     dto.getPassword()
             ));
 
-
             Optional<Users> userOptional = userRepo.findByEmail(dto.getUsername());
             if (userOptional.isEmpty()) {
+                logger.error("User not found with username: {}", dto.getUsername());
                 return new ResponseDto(404, "Email does not exist");
             }
 
-
             Users user = userOptional.get();
+            logger.info("User found with username: {}", user.getEmail());
             String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole());
 
             return new ResponseDto(200, jwtToken);
 
         } catch (BadCredentialsException badCredentials) {
+            logger.error("Invalid credentials for username: {}", dto.getUsername());
             return new ResponseDto(403, "Username / password is incorrect");
         } catch (Exception e) {
             logger.error("An error occurred during login: {}", e.getMessage());
             return new ResponseDto(500, "An internal error occurred");
         }
+
+
     }
 }
