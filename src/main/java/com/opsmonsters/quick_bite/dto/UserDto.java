@@ -23,6 +23,11 @@ public class UserDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public UserDto() {
+
+    }
+
     public Long getUserId() {
         return userId;
     }
