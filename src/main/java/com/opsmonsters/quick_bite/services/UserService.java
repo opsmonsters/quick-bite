@@ -107,4 +107,15 @@ public class UserService {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
+
+    public Optional<Optional<Users>> getUserByEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+
+
+        return Optional.ofNullable(userRepo.findByEmail(email));
+    }
 }
+
+
