@@ -2,7 +2,9 @@ package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.models.Otp;
+import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.OtpRepo;
+import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class OtpService{
 
     @Autowired
     private OtpRepo otpRepo;
+
+    @Autowired
+    private UserRepo userRepo;
 
     public ResponseDto generateOtp(String userId) {
 
@@ -46,10 +51,18 @@ public class OtpService{
             return new ResponseDto(400, "OTP expired", null);
         }
 
+
         otpEntity.setIsUsed(true);
         otpRepo.save(otpEntity);
+
+        Users user = userRepo.findByEmail(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setIsOtpVerified(true);
+        userRepo.save(user);
+
         return new ResponseDto(200, "OTP validated successfully", null);
     }
+
 
     public ResponseDto clearOtp(String userId) {
         otpRepo.deleteByUserId(userId);

@@ -5,7 +5,6 @@ import com.opsmonsters.quick_bite.dto.UserDto;
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +17,6 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-
     public ResponseDto createUser(UserDto dto) {
         try {
             Optional<Users> existingUser = userRepo.findByEmail(dto.getEmail());
@@ -29,98 +24,87 @@ public class UserService {
                 return new ResponseDto(400, "User with email " + dto.getEmail() + " already exists!");
             }
 
-            Users user = convertToEntity(dto); // Convert DTO to entity
-            user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password
-            userRepo.save(user);
-
-            return new ResponseDto(200, "User created successfully!");
-        } catch (Exception e) {
-            return new ResponseDto(500, "Error occurred while creating the user: " + e.getMessage());
-        }
-    }
-
-
-    public ResponseDto updateUser(long userId, UserDto dto) {
-        try {
-            Optional<Users> existingUser = userRepo.findById(userId);
-            if (!existingUser.isPresent()) {
-                return new ResponseDto(404, "User not found!");
-            }
-
-            Users user = existingUser.get();
+            Users user = new Users();
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());
             user.setEmail(dto.getEmail());
+            user.setPassword(dto.getPassword());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
+
+
+            if (dto.getRole() == null || dto.getRole().isEmpty()) {
+                user.setRole("USER");
+            } else {
+                user.setRole(dto.getRole());
+            }
+
             userRepo.save(user);
 
-            return new ResponseDto(200, "User updated successfully!");
+            return new ResponseDto(201, "User created successfully!");
         } catch (Exception e) {
-            return new ResponseDto(500, "Error occurred while updating the user: " + e.getMessage());
+            return new ResponseDto(500, "Error while creating user: " + e.getMessage());
         }
     }
 
 
     public List<UserDto> getAllUsers() {
-        try {
-            return userRepo.findAll().stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException("Error occurred while retrieving all users: " + e.getMessage());
+        return userRepo.findAll()
+                .stream()
+                .map(user -> {
+                    UserDto dto = new UserDto();
+                    dto.setUserId(user.getUserId());
+                    dto.setFirstName(user.getFirstName());
+                    dto.setLastName(user.getLastName());
+                    dto.setEmail(user.getEmail());
+                    dto.setPassword(user.getPassword());
+                    dto.setPhoneNumber(user.getPhoneNumber());
+                    dto.setProfileImageUrl(user.getProfileImageUrl());
+                    dto.setRole(user.getRole());
+                    dto.setCreatedAt(user.getCreatedAt());
+                    dto.setUpdatedAt(user.getUpdatedAt());
+                    return dto;
+                }).collect(Collectors.toList());
+    }
+
+    public ResponseDto getUserById(Long userId) {
+        Optional<Users> userOptional = userRepo.findById(userId);
+        if (userOptional.isPresent()) {
+            Users user = userOptional.get();
+            return new ResponseDto(200, user);
+        } else {
+            return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
 
+    public ResponseDto updateUser(Long userId, UserDto dto) {
+        Optional<Users> optionalUser = userRepo.findById(userId);
+        if (optionalUser.isPresent()) {
+            Users user = optionalUser.get();
 
-    public ResponseDto getUserById(long userId) {
-        try {
-            Optional<Users> user = userRepo.findById(userId);
-            if (user.isEmpty()) {
-                return new ResponseDto(404, "User with ID " + userId + " not found.");
+            user.setFirstName(dto.getFirstName());
+            user.setLastName(dto.getLastName());
+            user.setEmail(dto.getEmail());
+            user.setPhoneNumber(dto.getPhoneNumber());
+            user.setProfileImageUrl(dto.getProfileImageUrl());
+
+            if (dto.getRole() != null && !dto.getRole().isEmpty()) {
+                user.setRole(dto.getRole());
             }
-            UserDto userDto = convertToDto(user.get());
-            return new ResponseDto(200, userDto);
-        } catch (Exception e) {
-            return new ResponseDto(500, "Error occurred while retrieving the user: " + e.getMessage());
+
+            userRepo.save(user);
+            return new ResponseDto(200, "User updated successfully!");
+        } else {
+            return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
 
-
-    public ResponseDto deleteUser(long userId) {
-        try {
-            Optional<Users> user = userRepo.findById(userId);
-            if (!user.isPresent()) {
-                return new ResponseDto(404, "User not found!");
-            }
-            userRepo.deleteById(userId); // Delete user from database
+    public ResponseDto deleteUser(Long userId) {
+        if (userRepo.existsById(userId)) {
+            userRepo.deleteById(userId);
             return new ResponseDto(200, "User deleted successfully!");
-        } catch (Exception e) {
-            return new ResponseDto(500, "Error occurred while deleting the user: " + e.getMessage());
+        } else {
+            return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
-    }
-
-
-    private Users convertToEntity(UserDto dto) {
-        Users user = new Users();
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setPhoneNumber(dto.getPhoneNumber());
-        user.setProfileImageUrl(dto.getProfileImageUrl());
-
-        return user;
-    }
-
-
-    private UserDto convertToDto(Users user) {
-        UserDto dto = new UserDto();
-        dto.setUserId(user.getUserId());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setEmail(user.getEmail());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setProfileImageUrl(user.getProfileImageUrl());
-        return dto;
     }
 }
