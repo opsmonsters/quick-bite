@@ -1,14 +1,20 @@
 package com.opsmonsters.quick_bite.services;
 
 
+import com.opsmonsters.quick_bite.dto.ResponseDto;
+import com.opsmonsters.quick_bite.models.LoginDto;
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 @Service
 public class AuthServices {
 
@@ -65,4 +71,30 @@ public class AuthServices {
 
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
+
+    public ResponseDto userLogin(LoginDto dto) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    dto.getUsername(),
+                    dto.getPassword()
+            ));
+
+            Optional<Users> userOptional = userRepo.findByEmail(dto.getUsername());
+            if (userOptional.isEmpty()) {
+                return new ResponseDto(404, "Email Does Not Exist");
+            }
+
+            Users user = userOptional.get();
+            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole()); // Adjusted
+
+            return new ResponseDto(200, jwtToken);
+
+        } catch (BadCredentialsException badCredentials) {
+            return new ResponseDto(403, "Username / password is incorrect");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDto(500, "An Internal Error occurred");
+        }
+    }
+
 }

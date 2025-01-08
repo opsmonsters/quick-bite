@@ -47,6 +47,7 @@ public class UserService {
                     dto.setFirstName(user.getFirstName());
                     dto.setLastName(user.getLastName());
                     dto.setEmail(user.getEmail());
+                    dto.setPassword(user.getPassword());
                     dto.setPhoneNumber(user.getPhoneNumber());
                     dto.setProfileImageUrl(user.getProfileImageUrl());
                     dto.setCreatedAt(user.getCreatedAt());

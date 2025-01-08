@@ -1,5 +1,6 @@
 package com.opsmonsters.quick_bite.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +24,11 @@ public class Users implements UserDetails {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "phone_number")
@@ -52,17 +54,23 @@ public class Users implements UserDetails {
         if (role == null || role.isEmpty()) {
             role = "user";
         }
+        hashPassword();
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
+        hashPassword();
     }
 
-
+    private void hashPassword() {
+        if (password != null && !password.startsWith("$2a$")) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            this.password = encoder.encode(password);
+        }
+    }
 
     public Users() {
-
     }
 
     public Users(String firstName, String lastName, String email, String password, String phoneNumber, String profileImageUrl, String role) {
@@ -74,7 +82,6 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
         this.role = role;
     }
-
 
 
     public Long getUserId() {
@@ -114,8 +121,8 @@ public class Users implements UserDetails {
     }
 
     public void setPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(password);
+        this.password = password;
+        hashPassword();
     }
 
     public String getPhoneNumber() {
@@ -149,6 +156,7 @@ public class Users implements UserDetails {
     public Date getUpdatedAt() {
         return updatedAt;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
