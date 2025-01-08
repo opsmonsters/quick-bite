@@ -23,6 +23,7 @@ public class UserService {
             if (existingUser.isPresent()) {
                 return new ResponseDto(400, "User with email " + dto.getEmail() + " already exists!");
             }
+
             Users user = new Users();
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());
@@ -30,6 +31,14 @@ public class UserService {
             user.setPassword(dto.getPassword());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
+
+
+            if (dto.getRole() == null || dto.getRole().isEmpty()) {
+                user.setRole("USER");
+            } else {
+                user.setRole(dto.getRole());
+            }
+
             userRepo.save(user);
 
             return new ResponseDto(201, "User created successfully!");
@@ -37,6 +46,7 @@ public class UserService {
             return new ResponseDto(500, "Error while creating user: " + e.getMessage());
         }
     }
+
 
     public List<UserDto> getAllUsers() {
         return userRepo.findAll()
@@ -50,6 +60,7 @@ public class UserService {
                     dto.setPassword(user.getPassword());
                     dto.setPhoneNumber(user.getPhoneNumber());
                     dto.setProfileImageUrl(user.getProfileImageUrl());
+                    dto.setRole(user.getRole());
                     dto.setCreatedAt(user.getCreatedAt());
                     dto.setUpdatedAt(user.getUpdatedAt());
                     return dto;
@@ -70,11 +81,17 @@ public class UserService {
         Optional<Users> optionalUser = userRepo.findById(userId);
         if (optionalUser.isPresent()) {
             Users user = optionalUser.get();
+
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());
             user.setEmail(dto.getEmail());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
+
+            if (dto.getRole() != null && !dto.getRole().isEmpty()) {
+                user.setRole(dto.getRole());
+            }
+
             userRepo.save(user);
             return new ResponseDto(200, "User updated successfully!");
         } else {

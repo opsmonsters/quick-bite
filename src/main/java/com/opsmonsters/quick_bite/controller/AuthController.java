@@ -1,24 +1,26 @@
 package com.opsmonsters.quick_bite.controller;
 
+import com.opsmonsters.quick_bite.dto.ForgotPasswordDto;
+import com.opsmonsters.quick_bite.dto.ResetPasswordDto;
 import com.opsmonsters.quick_bite.dto.ResponseDto;
-import com.opsmonsters.quick_bite.models.LoginDto;
-import com.opsmonsters.quick_bite.services.AuthServices;
+import com.opsmonsters.quick_bite.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    AuthServices authService;
+    private UserServices userServices;
 
-    @PostMapping("/auth/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody LoginDto dto){
-        ResponseDto response = authService.userLogin(dto);
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatusCode()));
+    @PostMapping("/forgot-password")
+    public ResponseDto forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) {
+        return userServices.forgotPassword(forgotPasswordDto);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        return userServices.resetPassword(resetPasswordDto);
     }
 }
-

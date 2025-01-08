@@ -67,7 +67,12 @@ public class AuthServices {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         logger.info("Authentication successful for email: {}", email);
+        if (!user.getIsOtpVerified()) {
+            logger.error("User with email {} has not verified OTP", email);
+            throw new RuntimeException("Please verify your OTP before logging in.");
+        }
 
+        logger.info("Authentication successful for email: {}", email);
 
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
@@ -96,5 +101,6 @@ public class AuthServices {
             return new ResponseDto(500, "An Internal Error occurred");
         }
     }
+
 
 }
