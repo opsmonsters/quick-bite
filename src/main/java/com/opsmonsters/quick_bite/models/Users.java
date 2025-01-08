@@ -69,6 +69,10 @@ public class Users implements UserDetails {
         this.role = role;
         this.updatedAt = updatedAt;
     }
+
+    public Users() {
+    }
+
     public Long getUserId() {
         return userId;
     }
