@@ -1,7 +1,7 @@
 package com.opsmonsters.quick_bite.controller;
 
 import com.opsmonsters.quick_bite.dto.ResponseDto;
-import com.opsmonsters.quick_bite.models.LoginDto;
+import com.opsmonsters.quick_bite.dto.LoginDto;
 import com.opsmonsters.quick_bite.services.AuthServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    AuthServices authService;
+    AuthServices authServices;
 
     @PostMapping("/auth/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody LoginDto dto){
-        ResponseDto response = authService.userLogin(dto);
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatusCode()));
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginDto loginDto) {
+
+        ResponseDto response = authServices.userLogin(loginDto);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }
 
