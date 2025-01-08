@@ -4,7 +4,6 @@ package com.opsmonsters.quick_bite.models;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -57,8 +56,7 @@ public class Users implements UserDetails {
     protected void onUpdate() {
         updatedAt = new Date();
     }
-    public Users(Long userId, Date createdAt, String email, String firstName, String lastName, String password,
-                 String phoneNumber, String profileImageUrl, String role, Date updatedAt) {
+    public Users() {
         this.userId = userId;
         this.createdAt = createdAt;
         this.email = email;
@@ -136,7 +134,7 @@ public class Users implements UserDetails {
     }
 
     private Boolean isOtpVerified = false;
-    
+
     public Boolean getIsOtpVerified() {
         return isOtpVerified;
     }

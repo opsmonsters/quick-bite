@@ -12,8 +12,9 @@ public class UserDto {
     private String profileImageUrl;
     private Date createdAt;
     private Date updatedAt;
-    public UserDto(Long userId, String firstName, String lastName, String email, String phoneNumber,
-                   String profileImageUrl, Date createdAt, Date updatedAt) {
+    private String role;
+
+    public UserDto() {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -64,6 +65,13 @@ public class UserDto {
     }
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
     public Date getCreatedAt() {
         return createdAt;

@@ -3,6 +3,7 @@ package com.opsmonsters.quick_bite.services;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ public class JwtServices {
     public String generateToken(String userName, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
+
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -36,7 +38,7 @@ public class JwtServices {
                 .getSubject();
     }
 
-    // Non-static method to extract claim (e.g., role)
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -57,3 +59,8 @@ public class JwtServices {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 }
+
+
+
+
+
