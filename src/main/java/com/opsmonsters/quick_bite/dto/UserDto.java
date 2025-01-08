@@ -12,8 +12,11 @@ public class UserDto {
     private String profileImageUrl;
     private Date createdAt;
     private Date updatedAt;
-    public UserDto(Long userId, String firstName, String lastName, String email, String phoneNumber,
-                   String profileImageUrl, Date createdAt, Date updatedAt) {
+
+    public UserDto() {}
+
+
+    public UserDto(Long userId, String firstName, String lastName, String email, String phoneNumber, String profileImageUrl, Date createdAt, Date updatedAt) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -23,11 +26,6 @@ public class UserDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
-    public UserDto() {
-
-    }
-
     public Long getUserId() {
         return userId;
     }
@@ -40,18 +38,22 @@ public class UserDto {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+
     public String getLastName() {
         return lastName;
     }
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }

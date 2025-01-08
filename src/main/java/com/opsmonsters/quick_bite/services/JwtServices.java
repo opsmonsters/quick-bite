@@ -36,7 +36,7 @@ public class JwtServices {
                 .getSubject();
     }
 
-    // Non-static method to extract claim (e.g., role)
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);

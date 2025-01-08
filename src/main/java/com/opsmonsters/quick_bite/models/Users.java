@@ -47,6 +47,13 @@ public class Users implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date resetTokenExpiry;
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -153,6 +160,23 @@ public class Users implements UserDetails {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Date getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(Date resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 

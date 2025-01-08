@@ -16,11 +16,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping
     public ResponseEntity<ResponseDto> createUser(@RequestBody UserDto dto) {
         ResponseDto response = userService.createUser(dto);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -28,17 +30,20 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseDto> getUserById(@PathVariable Long userId) {
         ResponseDto response = userService.getUserById(userId);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
+
     @PutMapping("/{userId}")
     public ResponseEntity<ResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserDto dto) {
         ResponseDto response = userService.updateUser(userId, dto);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<ResponseDto> deleteUser(@PathVariable Long userId) {
