@@ -98,7 +98,14 @@ public class UserService {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
-
+    public Users getUserByEmail(String email) {
+        try {
+            Optional<Users> user = userRepo.findByEmail(email);
+            return user.orElse(null);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while retrieving the user by email: " + e.getMessage(), e);
+        }
+    }
     public ResponseDto deleteUser(Long userId) {
         if (userRepo.existsById(userId)) {
             userRepo.deleteById(userId);

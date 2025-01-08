@@ -1,4 +1,4 @@
-package com.opsmonsters.quick_bite.models;
+package com.opsmonsters.quick_bite.dto;
 
 
 public class LoginDto {

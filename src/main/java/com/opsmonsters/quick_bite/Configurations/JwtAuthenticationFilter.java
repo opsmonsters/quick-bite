@@ -2,7 +2,7 @@ package com.opsmonsters.quick_bite.Configurations;
 
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.services.JwtServices;
-import com.opsmonsters.quick_bite.services.UserService;
+import com.opsmonsters.quick_bite.services.UserServices;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Optional<Optional<Users>> userDetails = userService.getUserByEmail(userEmail);
 
-                if (userDetails.isPresent() && jwtService.isTokenValid(jwt, String.valueOf(userDetails))) {
+                if (userDetails != null && jwtService.isTokenValid(jwt, String.valueOf(userDetails))) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
