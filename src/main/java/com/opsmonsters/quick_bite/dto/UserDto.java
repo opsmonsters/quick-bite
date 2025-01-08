@@ -26,6 +26,10 @@ public class UserDto {
         this.updatedAt = updatedAt;
     }
 
+    public UserDto() {
+
+    }
+
 
     public Long getUserId() {
         return userId;

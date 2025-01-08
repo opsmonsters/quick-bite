@@ -99,6 +99,7 @@ public class UserService {
         }
     }
 
+
     public ResponseDto deleteUser(Long userId) {
         if (userRepo.existsById(userId)) {
             userRepo.deleteById(userId);

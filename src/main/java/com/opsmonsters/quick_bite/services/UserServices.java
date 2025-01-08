@@ -1,4 +1,6 @@
 package com.opsmonsters.quick_bite.services;
+import com.opsmonsters.quick_bite.dto.ForgotPasswordDto;
+import com.opsmonsters.quick_bite.dto.ResetPasswordDto;
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.dto.UserDto;
 import com.opsmonsters.quick_bite.models.Users;
@@ -93,5 +95,13 @@ public class UserServices {
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while retrieving the user by email: " + e.getMessage(), e);
         }
+    }
+
+    public ResponseDto forgotPassword(ForgotPasswordDto forgotPasswordDto) {
+        return null;
+    }
+
+    public ResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
+        return null;
     }
 }
