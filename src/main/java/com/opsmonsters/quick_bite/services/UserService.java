@@ -124,5 +124,3 @@ public class UserService {
         return Optional.ofNullable(userRepo.findByEmail(email));
     }
 }
-
-

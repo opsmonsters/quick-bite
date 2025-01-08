@@ -1,6 +1,7 @@
 package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -26,6 +27,13 @@ public class Product {
     @Column(name = "about")
     private String about;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_tags",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
     public Long getProductId() {
         return productId;
@@ -73,5 +81,13 @@ public class Product {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
