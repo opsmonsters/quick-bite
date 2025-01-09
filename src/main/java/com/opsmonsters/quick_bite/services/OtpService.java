@@ -22,6 +22,7 @@ public class OtpService {
     private static final int OTP_VALIDITY = 5 * 60 * 1000; // 5 minutes
 
     public ResponseDto generateOtp(String userId) {
+        try {
 
             String otpCode = String.format("%06d", new Random().nextInt(999999));
 
@@ -86,7 +87,3 @@ public class OtpService {
         }
     }
 }
-
-
-
-

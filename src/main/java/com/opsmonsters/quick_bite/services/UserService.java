@@ -23,7 +23,6 @@ public class UserService {
             if (existingUser.isPresent()) {
                 return new ResponseDto(400, "User with email " + dto.getEmail() + " already exists!");
             }
-
             Users user = new Users();
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());
@@ -47,7 +46,6 @@ public class UserService {
         }
     }
 
-
     public List<UserDto> getAllUsers() {
         return userRepo.findAll()
                 .stream()
@@ -60,7 +58,6 @@ public class UserService {
                     dto.setPassword(user.getPassword());
                     dto.setPhoneNumber(user.getPhoneNumber());
                     dto.setProfileImageUrl(user.getProfileImageUrl());
-                    dto.setRole(user.getRole());
                     dto.setCreatedAt(user.getCreatedAt());
                     dto.setUpdatedAt(user.getUpdatedAt());
                     return dto;
@@ -81,7 +78,6 @@ public class UserService {
         Optional<Users> optionalUser = userRepo.findById(userId);
         if (optionalUser.isPresent()) {
             Users user = optionalUser.get();
-
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());
             user.setEmail(dto.getEmail());
@@ -100,8 +96,8 @@ public class UserService {
     }
     public Users getUserByEmail(String email) {
         try {
-            Optional<Users> user = userRepo.findByEmail(email);
-            return user.orElse(null);
+            Optional<Otp> user = userRepo.findByEmail(email);
+            return user.orElse(null).getUser();
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while retrieving the user by email: " + e.getMessage(), e);
         }
