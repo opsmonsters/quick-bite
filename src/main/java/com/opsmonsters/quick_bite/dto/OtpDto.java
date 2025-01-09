@@ -1,54 +1,31 @@
-package com.opsmonsters.quick_bite.models;
+package com.opsmonsters.quick_bite.dto;
 
-import jakarta.persistence.*;
+
 import java.util.Date;
 
-@Entity
-@Table(name = "otps")
-public class Otp {
+public class OtpDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "otp", nullable = false)
     private String otp;
-
-    @Column(name = "user_id", nullable = false)
     private String userId;
-
-    @Column(name = "created_at", nullable = false)
     private Date createdAt;
-
-    @Column(name = "expires_at", nullable = false)
     private Date expiresAt;
+    private Boolean isUsed;
 
-    @Column(name = "is_used", nullable = false)
-    private Boolean isUsed = false;
+    public OtpDto() {
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "password", nullable = false)
-    private Users user;
-
+    public OtpDto(Long id, String otp, String userId, Date createdAt, Date expiresAt, Boolean isUsed) {
+        this.id = id;
+        this.otp = otp;
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.expiresAt = expiresAt;
+        this.isUsed = isUsed;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public Boolean getUsed() {
-        return isUsed;
-    }
-
-    public void setUsed(Boolean used) {
-        isUsed = used;
-    }
-
-    public Users getUser() {
-        return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
     }
 
     public void setId(Long id) {
@@ -94,6 +71,4 @@ public class Otp {
     public void setIsUsed(Boolean isUsed) {
         this.isUsed = isUsed;
     }
-
-
 }

@@ -13,7 +13,6 @@ public class UserDto {
     private Date createdAt;
     private Date updatedAt;
     private String role;
-
     public UserDto() {
         this.userId = userId;
         this.firstName = firstName;
