@@ -67,7 +67,7 @@ public class OtpService {
 
     public ResponseDto clearOtp(String userId) {
         try {
-            otpRepo.deleteByUserId(userId); // Clear all OTPs for the given user ID
+            otpRepo.deleteByUserId(userId);
             return new ResponseDto(200, "All OTPs for user " + userId + " have been cleared successfully.");
         } catch (Exception e) {
             return new ResponseDto(500, "An error occurred while clearing OTPs: " + e.getMessage());
