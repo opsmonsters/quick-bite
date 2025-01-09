@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 import java.util.Date;
 
 @Service
-public class OtpService{
+public class OtpService {
 
     @Autowired
     private OtpRepo otpRepo;
@@ -18,36 +18,44 @@ public class OtpService{
     public ResponseDto generateOtp(String userId) {
 
         String otp = String.format("%06d", new SecureRandom().nextInt(999999));
+
+
         Otp otpEntity = new Otp();
         otpEntity.setUserId(userId);
         otpEntity.setOtp(otp);
         otpEntity.setCreatedAt(new Date());
-        otpEntity.setExpiresAt(new Date(System.currentTimeMillis() + 300000));
+        otpEntity.setExpiresAt(new Date(System.currentTimeMillis() + 300000)); // OTP expires in 5 minutes
         otpEntity.setIsUsed(false);
+
+
         otpRepo.save(otpEntity);
 
-
-
-        return new ResponseDto(200, "OTP generated and sent successfully", null);
+        return new ResponseDto(200, "OTP generated and saved successfully", null);
     }
 
     public ResponseDto validateOtp(String userId, String otp) {
-        Otp otpEntity = otpRepo.findByUserIdAndOtp(userId, otp);
+        try {
 
-        if (otpEntity == null) {
-            return new ResponseDto(400, "Invalid OTP", null);
-        }
+            Otp otpEntity = otpRepo.findByUserIdAndOtp(userId, otp);
 
-        if (otpEntity.getIsUsed()) {
-            return new ResponseDto(400, "OTP already used", null);
-        }
-    }
+            if (otpEntity == null) {
+                return new ResponseDto(400, "Invalid OTP", null);
+            }
 
-        if (new Date().after(otpEntity.getExpiresAt())) {
-            return new ResponseDto(400, "OTP expired", null);
-        }
+            if (otpEntity.getIsUsed()) {
+                return new ResponseDto(400, "OTP already used", null);
+            }
 
-            return new ResponseDto(400, "Invalid or expired OTP.");
+            if (new Date().after(otpEntity.getExpiresAt())) {
+                return new ResponseDto(400, "OTP expired", null);
+            }
+
+
+            otpEntity.setIsUsed(true);
+            otpRepo.save(otpEntity);
+
+            return new ResponseDto(200, "OTP validated successfully", null);
+
         } catch (Exception e) {
             return new ResponseDto(500, "Error while validating OTP: " + e.getMessage());
         }
@@ -63,6 +71,7 @@ public class OtpService{
         }
     }
 }
+
 
 
 

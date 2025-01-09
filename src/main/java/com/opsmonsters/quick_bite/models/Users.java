@@ -51,7 +51,7 @@ public class Users implements UserDetails {
     private Boolean isOtpVerified = false;
 
     @Column(name = "reset_token")
-    private String resetToken;  // Add this field for the reset token
+    private String resetToken;
 
     @PrePersist
     protected void onCreate() {
@@ -59,7 +59,6 @@ public class Users implements UserDetails {
         if (role == null || role.isEmpty()) {
             role = "user";
         }
-        hashPassword();
     }
 
     @PreUpdate
@@ -215,4 +214,5 @@ public class Users implements UserDetails {
     }
 
 
-}
+    }
+

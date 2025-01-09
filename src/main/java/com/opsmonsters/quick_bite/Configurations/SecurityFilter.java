@@ -40,7 +40,7 @@ public class SecurityFilter {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/auth/login", "/admin/users", "/products").permitAll()
+                        .requestMatchers("/auth/login", "/auth/users", "/products").permitAll()
 
                         .requestMatchers("/admin/product/tags/**").permitAll()
 

@@ -26,10 +26,29 @@ public class Otp {
     @Column(name = "is_used", nullable = false)
     private Boolean isUsed = false;
 
+    @ManyToOne
+    @JoinColumn(name = "password", nullable = false)
+    private Users user;
 
 
     public Long getId() {
         return id;
+    }
+
+    public Boolean getUsed() {
+        return isUsed;
+    }
+
+    public void setUsed(Boolean used) {
+        isUsed = used;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     public void setId(Long id) {
@@ -75,4 +94,6 @@ public class Otp {
     public void setIsUsed(Boolean isUsed) {
         this.isUsed = isUsed;
     }
+
+
 }

@@ -12,8 +12,8 @@ public class UserDto {
     private String profileImageUrl;
     private Date createdAt;
     private Date updatedAt;
-    public UserDto(Long userId, String firstName, String lastName, String email, String phoneNumber,
-                   String profileImageUrl, Date createdAt, Date updatedAt) {
+    private String role;
+    public UserDto() {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;

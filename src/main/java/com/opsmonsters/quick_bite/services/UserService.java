@@ -2,6 +2,7 @@ package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.dto.UserDto;
+import com.opsmonsters.quick_bite.models.Otp;
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -17,9 +19,10 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
+
     public ResponseDto createUser(UserDto dto) {
         try {
-            Optional<Users> existingUser = userRepo.findByEmail(dto.getEmail());
+            Optional<Otp> existingUser = userRepo.findByEmail(dto.getEmail());
             if (existingUser.isPresent()) {
                 return new ResponseDto(400, "User with email " + dto.getEmail() + " already exists!");
             }
@@ -97,8 +100,8 @@ public class UserService {
     }
     public Users getUserByEmail(String email) {
         try {
-            Optional<Users> user = userRepo.findByEmail(email);
-            return user.orElse(null);
+            Optional<Otp> user = userRepo.findByEmail(email);
+            return user.orElse(null).getUser();
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while retrieving the user by email: " + e.getMessage(), e);
         }
@@ -111,4 +114,7 @@ public class UserService {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
+
+
 }
+
