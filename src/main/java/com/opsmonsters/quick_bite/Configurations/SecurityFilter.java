@@ -40,12 +40,11 @@ public class SecurityFilter {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers("/auth/login", "/auth/users", "/products").permitAll()
 
-                        .requestMatchers("/auth/login", "/products").permitAll()
-
+                        .requestMatchers("/admin/product/tags/**").permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
 
                         .anyRequest().authenticated()
                 )
@@ -65,6 +64,7 @@ public class SecurityFilter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
 
         configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));

@@ -1,8 +1,11 @@
 package com.opsmonsters.quick_bite.models;
 
+
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -33,7 +36,7 @@ public class Users implements UserDetails {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     private String role;
 
     @Column(name = "created_at")
@@ -53,6 +56,9 @@ public class Users implements UserDetails {
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
+        if (role == null || role.isEmpty()) {
+            role = "user";
+        }
     }
 
     @PreUpdate
@@ -72,7 +78,8 @@ public class Users implements UserDetails {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
+        this.email = email;
+        this.password = new BCryptPasswordEncoder().encode(password);
         this.phoneNumber = phoneNumber;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
@@ -80,8 +87,6 @@ public class Users implements UserDetails {
         this.isOtpVerified = isOtpVerified != null ? isOtpVerified : false; // Ensure proper initialization
         this.resetToken = resetToken;  // Initialize reset token
     }
-
-
     public Long getUserId() {
         return userId;
     }
@@ -138,6 +143,7 @@ public class Users implements UserDetails {
         this.profileImageUrl = profileImageUrl;
     }
 
+
     public String getRole() {
         return role;
     }
@@ -180,14 +186,13 @@ public class Users implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         return Collections.emptyList();
     }
-
     @Override
     public String getUsername() {
         return email;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -207,4 +212,7 @@ public class Users implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-}
+
+
+    }
+
