@@ -14,22 +14,19 @@ public class UserDto {
     private Date updatedAt;
     private String role;
 
-
-    public UserDto(Long userId, String firstName, String lastName, String email, String phoneNumber, String profileImageUrl, Date createdAt, Date updatedAt) {
+    public UserDto(Long userId, String firstName, String lastName, String email, String password,
+                   String phoneNumber, String profileImageUrl, Date createdAt, Date updatedAt, String role) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
         this.phoneNumber = phoneNumber;
         this.profileImageUrl = profileImageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.role = role;
     }
-
-    public UserDto() {
-
-    }
-
 
     public Long getUserId() {
         return userId;
@@ -47,6 +44,13 @@ public class UserDto {
         this.firstName = firstName;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public String getEmail() {
         return email;
@@ -55,12 +59,7 @@ public class UserDto {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getLastName() {
-        return lastName;
-    }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+
     public String getPassword() {
         return password;
     }
@@ -84,6 +83,7 @@ public class UserDto {
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
     public String getRole() {
         return role;
     }
@@ -91,6 +91,7 @@ public class UserDto {
     public void setRole(String role) {
         this.role = role;
     }
+
     public Date getCreatedAt() {
         return createdAt;
     }

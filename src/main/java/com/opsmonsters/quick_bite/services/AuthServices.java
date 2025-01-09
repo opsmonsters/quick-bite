@@ -90,7 +90,7 @@ public class AuthServices {
             }
 
             Users user = userOptional.get();
-            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole()); // Adjusted
+            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole());
 
             return new ResponseDto(200, jwtToken);
 

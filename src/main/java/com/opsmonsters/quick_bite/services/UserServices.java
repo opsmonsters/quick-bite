@@ -1,6 +1,6 @@
 package com.opsmonsters.quick_bite.services;
+
 import com.opsmonsters.quick_bite.dto.ForgotPasswordDto;
-import com.opsmonsters.quick_bite.dto.ResetPasswordDto;
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.dto.UserDto;
 import com.opsmonsters.quick_bite.models.Users;
@@ -37,7 +37,19 @@ public class UserServices {
             if (user.isEmpty()) {
                 return new ResponseDto(404, "User with ID " + userId + " not found.");
             }
-            return new ResponseDto(200, user.get());
+            UserDto userDto = new UserDto(
+                    user.get().getUserId(),
+                    user.get().getFirstName(),
+                    user.get().getLastName(),
+                    user.get().getEmail(),
+                    user.get().getPassword(),
+                    user.get().getPhoneNumber(),
+                    user.get().getProfileImageUrl(),
+                    user.get().getCreatedAt(),
+                    user.get().getUpdatedAt(),
+                    user.get().getRole()
+            );
+            return new ResponseDto(200, userDto);
         } catch (Exception e) {
             return new ResponseDto(500, "Error occurred while retrieving the user: " + e.getMessage());
         }
@@ -45,11 +57,20 @@ public class UserServices {
 
     public ResponseDto getAllUsers() {
         try {
-            List<UserDto> userDto = userRepo.findAll().stream()
+            List<UserDto> userDtos = userRepo.findAll().stream()
                     .map(user -> new UserDto(
-                    ))
+                            user.getUserId(),
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getEmail(),
+                            user.getPassword(),
+                            user.getPhoneNumber(),
+                            user.getProfileImageUrl(),
+                            user.getCreatedAt(),
+                            user.getUpdatedAt(),
+                            user.getRole()))
                     .collect(Collectors.toList());
-            return new ResponseDto(200, userDto);
+            return new ResponseDto(200, userDtos);
         } catch (Exception e) {
             return new ResponseDto(500, "Error occurred while retrieving users: " + e.getMessage());
         }
@@ -75,6 +96,42 @@ public class UserServices {
         }
     }
 
+    @Autowired
+    private JwtServices jwtService;
+
+    public ResponseDto forgotPassword(ForgotPasswordDto forgotPasswordDto) {
+        try {
+
+            Optional<Users> user = userRepo.findByEmail(forgotPasswordDto.getEmail());
+            if (user.isEmpty()) {
+                return new ResponseDto(404, "User with email " + forgotPasswordDto.getEmail() + " not found.");
+            }
+
+            return new ResponseDto(200, "Password reset instructions sent to " + forgotPasswordDto.getEmail());
+        } catch (Exception e) {
+            return new ResponseDto(500, "Error occurred while processing the forgot password request: " + e.getMessage());
+        }
+    }
+
+    public ResponseDto resetPassword(String token, String newPassword) {
+        try {
+
+            String userEmail = jwtService.extractUsername(token);
+
+            Optional<Users> userOptional = userRepo.findByEmail(userEmail);
+            if (userOptional.isEmpty()) {
+                return new ResponseDto(404, "User with email " + userEmail + " not found.");
+            }
+
+            Users user = userOptional.get();
+            user.setPassword(newPassword);
+            userRepo.save(user);
+            return new ResponseDto(200, "Password reset successfully!");
+        } catch (Exception e) {
+            return new ResponseDto(500, "Error occurred while resetting the password: " + e.getMessage());
+        }
+    }
+
     public ResponseDto deleteUser(long userId) {
         try {
             if (userRepo.existsById(userId)) {
@@ -95,13 +152,5 @@ public class UserServices {
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while retrieving the user by email: " + e.getMessage(), e);
         }
-    }
-
-    public ResponseDto forgotPassword(ForgotPasswordDto forgotPasswordDto) {
-        return null;
-    }
-
-    public ResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
-        return null;
     }
 }

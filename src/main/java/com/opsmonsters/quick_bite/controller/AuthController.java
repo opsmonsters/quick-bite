@@ -19,8 +19,12 @@ public class AuthController {
         return userServices.forgotPassword(forgotPasswordDto);
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/resetPassword")
     public ResponseDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-        return userServices.resetPassword(resetPasswordDto);
+
+        String token = resetPasswordDto.getToken();
+        String newPassword = resetPasswordDto.getNewPassword();
+
+        return userServices.resetPassword(token, newPassword);
     }
 }

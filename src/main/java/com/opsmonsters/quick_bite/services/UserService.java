@@ -31,13 +31,7 @@ public class UserService {
             user.setPassword(dto.getPassword());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
-
-
-            if (dto.getRole() == null || dto.getRole().isEmpty()) {
-                user.setRole("USER");
-            } else {
-                user.setRole(dto.getRole());
-            }
+            user.setRole(dto.getRole() == null || dto.getRole().isEmpty() ? "USER" : dto.getRole());
 
             userRepo.save(user);
 
@@ -47,31 +41,39 @@ public class UserService {
         }
     }
 
-
     public List<UserDto> getAllUsers() {
         return userRepo.findAll()
                 .stream()
-                .map(user -> {
-                    UserDto dto = new UserDto();
-                    dto.setUserId(user.getUserId());
-                    dto.setFirstName(user.getFirstName());
-                    dto.setLastName(user.getLastName());
-                    dto.setEmail(user.getEmail());
-                    dto.setPassword(user.getPassword());
-                    dto.setPhoneNumber(user.getPhoneNumber());
-                    dto.setProfileImageUrl(user.getProfileImageUrl());
-                    dto.setRole(user.getRole());
-                    dto.setCreatedAt(user.getCreatedAt());
-                    dto.setUpdatedAt(user.getUpdatedAt());
-                    return dto;
-                }).collect(Collectors.toList());
+                .map(user -> new UserDto(
+                        user.getUserId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getPassword(),
+                        user.getPhoneNumber(),
+                        user.getProfileImageUrl(),
+                        user.getCreatedAt(),
+                        user.getUpdatedAt(),
+                        user.getRole()))
+                .collect(Collectors.toList());
     }
 
     public ResponseDto getUserById(Long userId) {
         Optional<Users> userOptional = userRepo.findById(userId);
         if (userOptional.isPresent()) {
             Users user = userOptional.get();
-            return new ResponseDto(200, user);
+            UserDto dto = new UserDto(
+                    user.getUserId(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getPhoneNumber(),
+                    user.getProfileImageUrl(),
+                    user.getCreatedAt(),
+                    user.getUpdatedAt(),
+                    user.getRole());
+            return new ResponseDto(200, dto);
         } else {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
@@ -87,7 +89,6 @@ public class UserService {
             user.setEmail(dto.getEmail());
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
-
             if (dto.getRole() != null && !dto.getRole().isEmpty()) {
                 user.setRole(dto.getRole());
             }
@@ -98,7 +99,6 @@ public class UserService {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
-
 
     public ResponseDto deleteUser(Long userId) {
         if (userRepo.existsById(userId)) {
