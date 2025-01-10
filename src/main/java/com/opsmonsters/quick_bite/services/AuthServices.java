@@ -1,5 +1,4 @@
 package com.opsmonsters.quick_bite.services;
-
 import com.opsmonsters.quick_bite.dto.ForgotPasswordDto;
 import com.opsmonsters.quick_bite.dto.LoginDto;
 import com.opsmonsters.quick_bite.dto.ResetPasswordDto;
@@ -15,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -109,43 +107,46 @@ public class AuthServices {
             return new ResponseDto(500, "An internal error occurred");
         }
     }
-        public ResponseDto forgotPassword(ForgotPasswordDto forgotPasswordDto) {
-            try {
-                logger.info("Processing forgot password request for email: {}", forgotPasswordDto.getEmail());
+    public ResponseDto forgotPassword(ForgotPasswordDto forgotPasswordDto) {
+        try {
+            logger.info("Processing forgot password request for email: {}", forgotPasswordDto.getEmail());
 
 
-                Optional<Otp> otpOptional = userRepo.findByEmail(forgotPasswordDto.getEmail());
-                if (otpOptional.isEmpty()) {
-                    logger.error("User not found with email: {}", forgotPasswordDto.getEmail());
-                    return new ResponseDto(404, "User not found.");
-                }
-
-                Otp otp = otpOptional.get();
-
-
-                String otpCode = generateOtp();
-                Otp otps = new Otp();
-                otps.setOtp(otpCode);
-                otps.setUserId(String.valueOf(otp.getUserId()));
-                otps.setCreatedAt(new Date());
-                otps.setExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000));
-                otps.setIsUsed(false);
-
-
-                otpRepo.save(otp);
-
-                logger.info("Generated OTP for email {}: {}", forgotPasswordDto.getEmail(), otpCode);
-
-
-                return new ResponseDto(200, "OTP generated and sent successfully.");
-
-            } catch (Exception e) {
-                logger.error("An error occurred during forgot password processing: {}", e.getMessage());
-                return new ResponseDto(500, "An internal error occurred.");
+            Optional<Otp> userOptional = userRepo.findByEmail(forgotPasswordDto.getEmail());
+            if (userOptional.isEmpty()) {
+                logger.error("User not found with email: {}", forgotPasswordDto.getEmail());
+                return new ResponseDto(404, "User not found.");
             }
-        }
 
-        public ResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
+
+            Users user = userOptional.get().getUser();
+            Long userId = user.getUserId();
+
+
+            String otpCode = generateOtp();
+
+
+            Otp otps = new Otp();
+            otps.setOtp(otpCode);
+            otps.setUserId(userId);
+            otps.setCreatedAt(new Date());
+            otps.setExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000));
+            otps.setIsUsed(false);
+
+            otpRepo.save(otps);
+
+            logger.info("Generated OTP for email {}: {}", forgotPasswordDto.getEmail(), otpCode);
+
+            return new ResponseDto(200, "OTP generated and sent successfully.");
+
+        } catch (Exception e) {
+            logger.error("An error occurred during forgot password processing: {}", e.getMessage());
+            return new ResponseDto(500, "An internal error occurred.");
+        }
+    }
+
+
+    public ResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
             try {
                 logger.info("Attempting to reset password for email: {}", resetPasswordDto.getEmail());
 
@@ -159,7 +160,7 @@ public class AuthServices {
                 Otp otp = userOptional.get();
 
 
-                Optional<Otp> otpOptional = Optional.ofNullable(otpRepo.findByUserIdAndOtp(otp.getUserId().toString(), resetPasswordDto.getOtp()));
+                Optional<Otp> otpOptional = Optional.ofNullable(otpRepo.findByUserIdAndOtp(Long.parseLong(otp.getUserId().toString()), resetPasswordDto.getOtp()));
                 if (otpOptional.isEmpty()) {
                     logger.error("Invalid OTP for email: {}", resetPasswordDto.getEmail());
                     return new ResponseDto(403, "Invalid OTP.");

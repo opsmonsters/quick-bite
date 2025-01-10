@@ -9,13 +9,13 @@ public class Otp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(name = "otp", nullable = false)
     private String otp;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
@@ -27,11 +27,11 @@ public class Otp {
     private Boolean isUsed = false;
 
     @ManyToOne
-    @JoinColumn(name = "password", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -51,7 +51,7 @@ public class Otp {
         this.user = user;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -63,11 +63,11 @@ public class Otp {
         this.otp = otp;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
