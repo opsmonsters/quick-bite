@@ -33,7 +33,7 @@ public class OtpService {
             otpEntity.setUserId(userId);
             otpEntity.setOtp(otp);
             otpEntity.setCreatedAt(new Date());
-            otpEntity.setExpiresAt(new Date(System.currentTimeMillis() + 300000)); // 5 mins
+            otpEntity.setExpiresAt(new Date(System.currentTimeMillis() + 300000));
             otpEntity.setIsUsed(false);
             otpRepo.save(otpEntity);
 

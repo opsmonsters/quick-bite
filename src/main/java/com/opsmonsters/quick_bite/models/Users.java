@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -66,27 +67,14 @@ public class Users implements UserDetails {
         updatedAt = new Date();
     }
 
-
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
+        this.password = password;
+    }
     public Users() {
     }
 
-
-    public Users(Long userId, Date createdAt, String email, String firstName, String lastName, String password,
-                 String phoneNumber, String profileImageUrl, String role, Date updatedAt, Boolean isOtpVerified, String resetToken) {
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = new BCryptPasswordEncoder().encode(password);
-        this.phoneNumber = phoneNumber;
-        this.profileImageUrl = profileImageUrl;
-        this.role = role;
-        this.updatedAt = updatedAt;
-        this.isOtpVerified = isOtpVerified != null ? isOtpVerified : false; // Ensure proper initialization
-        this.resetToken = resetToken;  // Initialize reset token
-    }
     public Long getUserId() {
         return userId;
     }
@@ -111,13 +99,7 @@ public class Users implements UserDetails {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getEmail() {
         return email;
@@ -189,6 +171,12 @@ public class Users implements UserDetails {
 
         return Collections.emptyList();
     }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
     @Override
     public String getUsername() {
         return email;

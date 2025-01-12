@@ -42,19 +42,6 @@ public class AuthServices {
         this.authenticationManager = authenticationManager;
     }
 
-    public String register(Users user) {
-        logger.info("Registering user with email: {}", user.getEmail());
-
-        if (userRepo.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepo.save(user);
-
-        logger.info("User registered successfully with email: {}", user.getEmail());
-        return jwtService.generateToken(user.getEmail(), user.getRole());
-    }
 
     public String authenticate(String email, String password) {
         logger.info("Authenticating user with email: {}", email);
@@ -147,59 +134,59 @@ public class AuthServices {
 
 
     public ResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
-            try {
-                logger.info("Attempting to reset password for email: {}", resetPasswordDto.getEmail());
+        try {
+            logger.info("Attempting to reset password for email: {}", resetPasswordDto.getEmail());
 
 
-                Optional<Otp> userOptional = userRepo.findByEmail(resetPasswordDto.getEmail());
-                if (userOptional.isEmpty()) {
-                    logger.error("User not found with email: {}", resetPasswordDto.getEmail());
-                    return new ResponseDto(404, "User not found.");
-                }
-
-                Otp otp = userOptional.get();
-
-
-                Optional<Otp> otpOptional = Optional.ofNullable(otpRepo.findByUserIdAndOtp(Long.parseLong(otp.getUserId().toString()), resetPasswordDto.getOtp()));
-                if (otpOptional.isEmpty()) {
-                    logger.error("Invalid OTP for email: {}", resetPasswordDto.getEmail());
-                    return new ResponseDto(403, "Invalid OTP.");
-                }
-
-                Users user = userOptional.get().getUser();
-
-
-                if (otp.getIsUsed()) {
-                    logger.error("OTP already used for email: {}", resetPasswordDto.getEmail());
-                    return new ResponseDto(403, "OTP already used.");
-                }
-
-                if (otp.getExpiresAt().before(new Date())) {
-                    logger.error("OTP expired for email: {}", resetPasswordDto.getEmail());
-                    return new ResponseDto(403, "OTP expired.");
-                }
-
-
-                user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
-                userRepo.save(user);
-
-
-                otp.setIsUsed(true);
-                otpRepo.save(otp);
-
-                logger.info("Password reset successfully for email: {}", resetPasswordDto.getEmail());
-                return new ResponseDto(200, "Password reset successfully.");
-
-            } catch (Exception e) {
-                logger.error("An error occurred during password reset: {}", e.getMessage());
-                return new ResponseDto(500, "An internal error occurred.");
+            Optional<Otp> userOptional = userRepo.findByEmail(resetPasswordDto.getEmail());
+            if (userOptional.isEmpty()) {
+                logger.error("User not found with email: {}", resetPasswordDto.getEmail());
+                return new ResponseDto(404, "User not found.");
             }
-        }
 
-        private String generateOtp() {
-            return String.format("%06d", new Random().nextInt(999999));
+            Otp otp = userOptional.get();
+
+
+            Optional<Otp> otpOptional = Optional.ofNullable(otpRepo.findByUserIdAndOtp(Long.parseLong(otp.getUserId().toString()), resetPasswordDto.getOtp()));
+            if (otpOptional.isEmpty()) {
+                logger.error("Invalid OTP for email: {}", resetPasswordDto.getEmail());
+                return new ResponseDto(403, "Invalid OTP.");
+            }
+
+            Users user = userOptional.get().getUser();
+
+
+            if (otp.getIsUsed()) {
+                logger.error("OTP already used for email: {}", resetPasswordDto.getEmail());
+                return new ResponseDto(403, "OTP already used.");
+            }
+
+            if (otp.getExpiresAt().before(new Date())) {
+                logger.error("OTP expired for email: {}", resetPasswordDto.getEmail());
+                return new ResponseDto(403, "OTP expired.");
+            }
+
+
+            user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+            userRepo.save(user);
+
+
+            otp.setIsUsed(true);
+            otpRepo.save(otp);
+
+            logger.info("Password reset successfully for email: {}", resetPasswordDto.getEmail());
+            return new ResponseDto(200, "Password reset successfully.");
+
+        } catch (Exception e) {
+            logger.error("An error occurred during password reset: {}", e.getMessage());
+            return new ResponseDto(500, "An internal error occurred.");
         }
     }
+
+    private String generateOtp() {
+        return String.format("%06d", new Random().nextInt(999999));
+    }
+}
 
 
 
