@@ -3,7 +3,7 @@ package com.opsmonsters.quick_bite.services;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 @Component
 public class JwtServices {
 
-    private final String SECRET_KEY = "1234hjksl_24567839hjkkkskx_ljhhhh";
+    private final String SECRET_KEY = "Make_everything_possible_2025_with_hardwork";
 
     public String generateToken(String userName, String role) {
         Map<String, Object> claims = new HashMap<>();
@@ -59,8 +59,6 @@ public class JwtServices {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 }
-
-
 
 
 

@@ -17,12 +17,11 @@ public class UserController {
     private UserService userService;
 
 
-    @PostMapping
-    public ResponseEntity<ResponseDto> createUser(@RequestBody UserDto dto) {
-        ResponseDto response = userService.createUser(dto);
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDto> registerUser(@RequestBody UserDto userDto) {
+        ResponseDto response = userService.createUser(userDto);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
-
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
