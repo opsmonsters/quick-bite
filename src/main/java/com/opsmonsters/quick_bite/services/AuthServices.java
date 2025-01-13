@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class AuthServices {
@@ -26,6 +25,7 @@ public class AuthServices {
     private final JwtServices jwtService;
     private final OtpRepo otpRepo;
     private final AuthenticationManager authenticationManager;
+    private final OtpService otpService;
     private static final Logger logger = LoggerFactory.getLogger(AuthServices.class);
 
 
@@ -34,15 +34,57 @@ public class AuthServices {
             PasswordEncoder passwordEncoder,
             JwtServices jwtService,
             OtpRepo otpRepo,
+            OtpService otpService,
             AuthenticationManager authenticationManager) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.otpRepo= otpRepo;
         this.jwtService = jwtService;
+        this.otpService= otpService;
         this.authenticationManager = authenticationManager;
     }
 
+    public ResponseDto userLogin(LoginDto loginDto) {
+        try {
 
+            logger.info("Attempting to login with username: {}", loginDto.getUsername());
+
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
+            );
+
+
+            Optional<Users> userOptional = userRepo.findByEmail(loginDto.getUsername());
+
+
+            if (userOptional.isEmpty()) {
+                logger.error("User not found with username: {}", loginDto.getUsername());
+                return new ResponseDto(404, "Email does not exist");
+            }
+
+            Users user = userOptional.get();
+
+            if (!user.getIsOtpVerified()) {
+                logger.error("User with email {} has not verified OTP", loginDto.getUsername());
+                return new ResponseDto(403, "Please verify your OTP before logging in.");
+            }
+
+
+            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole());
+            logger.info("User logged in successfully: {}", user.getEmail());
+
+            return new ResponseDto(200, jwtToken);
+
+        } catch (BadCredentialsException badCredentials) {
+
+            logger.error("Invalid credentials for username: {}", loginDto.getUsername());
+            return new ResponseDto(403, "Username / password is incorrect");
+        } catch (Exception e) {
+
+            logger.error("An error occurred during login: {}", e.getMessage());
+            return new ResponseDto(500, "An internal error occurred");
+        }
+    }
     public String authenticate(String email, String password) {
         logger.info("Authenticating user with email: {}", email);
 
@@ -55,8 +97,9 @@ public class AuthServices {
             throw new RuntimeException("Invalid username or password");
         }
 
+
         Users user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found")).getUser();
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.getIsOtpVerified()) {
             logger.error("User with email {} has not verified OTP", email);
@@ -66,64 +109,20 @@ public class AuthServices {
         return jwtService.generateToken(user.getEmail(), user.getRole());
     }
 
-    public ResponseDto userLogin(LoginDto dto) {
-        try {
-            logger.info("Attempting to login with username: {}", dto.getUsername());
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    dto.getUsername(),
-                    dto.getPassword()
-            ));
-
-            Optional<Otp> userOptional = userRepo.findByEmail(dto.getUsername());
-            if (userOptional.isEmpty()) {
-                logger.error("User not found with username: {}", dto.getUsername());
-                return new ResponseDto(404, "Email does not exist");
-            }
-
-            Users user = userOptional.get().getUser();
-            logger.info("User found with username: {}", user.getEmail());
-            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole());
-
-            return new ResponseDto(200, jwtToken);
-
-        } catch (BadCredentialsException badCredentials) {
-            logger.error("Invalid credentials for username: {}", dto.getUsername());
-            return new ResponseDto(403, "Username / password is incorrect");
-        } catch (Exception e) {
-            logger.error("An error occurred during login: {}", e.getMessage());
-            return new ResponseDto(500, "An internal error occurred");
-        }
-    }
     public ResponseDto forgotPassword(ForgotPasswordDto forgotPasswordDto) {
         try {
             logger.info("Processing forgot password request for email: {}", forgotPasswordDto.getEmail());
 
 
-            Optional<Otp> userOptional = userRepo.findByEmail(forgotPasswordDto.getEmail());
-            if (userOptional.isEmpty()) {
-                logger.error("User not found with email: {}", forgotPasswordDto.getEmail());
-                return new ResponseDto(404, "User not found.");
+            ResponseDto otpResponse = otpService.generateOtp(forgotPasswordDto.getEmail());
+
+            if (otpResponse.getStatusCode() != 200) {
+                logger.error("Error generating OTP for email: {}", forgotPasswordDto.getEmail());
+                return otpResponse;
             }
 
 
-            Users user = userOptional.get().getUser();
-            Long userId = user.getUserId();
-
-
-            String otpCode = generateOtp();
-
-
-            Otp otps = new Otp();
-            otps.setOtp(otpCode);
-            otps.setUserId(userId);
-            otps.setCreatedAt(new Date());
-            otps.setExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000));
-            otps.setIsUsed(false);
-
-            otpRepo.save(otps);
-
-            logger.info("Generated OTP for email {}: {}", forgotPasswordDto.getEmail(), otpCode);
-
+            logger.info("OTP generated successfully for email: {}", forgotPasswordDto.getEmail());
             return new ResponseDto(200, "OTP generated and sent successfully.");
 
         } catch (Exception e) {
@@ -137,24 +136,16 @@ public class AuthServices {
         try {
             logger.info("Attempting to reset password for email: {}", resetPasswordDto.getEmail());
 
+            Users user = userRepo.findByEmail(resetPasswordDto.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-            Optional<Otp> userOptional = userRepo.findByEmail(resetPasswordDto.getEmail());
-            if (userOptional.isEmpty()) {
-                logger.error("User not found with email: {}", resetPasswordDto.getEmail());
-                return new ResponseDto(404, "User not found.");
-            }
-
-            Otp otp = userOptional.get();
-
-
-            Optional<Otp> otpOptional = Optional.ofNullable(otpRepo.findByUserIdAndOtp(Long.parseLong(otp.getUserId().toString()), resetPasswordDto.getOtp()));
+            Optional<Otp> otpOptional = otpRepo.findByUserIdAndOtp(user.getUserId(), resetPasswordDto.getOtp());
             if (otpOptional.isEmpty()) {
                 logger.error("Invalid OTP for email: {}", resetPasswordDto.getEmail());
                 return new ResponseDto(403, "Invalid OTP.");
             }
 
-            Users user = userOptional.get().getUser();
-
+            Otp otp = otpOptional.get();
 
             if (otp.getIsUsed()) {
                 logger.error("OTP already used for email: {}", resetPasswordDto.getEmail());
@@ -166,10 +157,8 @@ public class AuthServices {
                 return new ResponseDto(403, "OTP expired.");
             }
 
-
             user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
             userRepo.save(user);
-
 
             otp.setIsUsed(true);
             otpRepo.save(otp);
@@ -183,9 +172,6 @@ public class AuthServices {
         }
     }
 
-    private String generateOtp() {
-        return String.format("%06d", new Random().nextInt(999999));
-    }
 }
 
 
