@@ -2,7 +2,7 @@ package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.dto.UserDto;
-import com.opsmonsters.quick_bite.models.Otp;
+
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
