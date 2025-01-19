@@ -2,6 +2,7 @@ package com.opsmonsters.quick_bite.services;
 
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.dto.UserDto;
+
 import com.opsmonsters.quick_bite.models.Users;
 import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -17,12 +20,16 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
+
     public ResponseDto createUser(UserDto dto) {
         try {
+
             Optional<Users> existingUser = userRepo.findByEmail(dto.getEmail());
             if (existingUser.isPresent()) {
                 return new ResponseDto(400, "User with email " + dto.getEmail() + " already exists!");
             }
+
+
             Users user = new Users();
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());
@@ -31,18 +38,35 @@ public class UserService {
             user.setPhoneNumber(dto.getPhoneNumber());
             user.setProfileImageUrl(dto.getProfileImageUrl());
 
-
             if (dto.getRole() == null || dto.getRole().isEmpty()) {
                 user.setRole("USER");
             } else {
                 user.setRole(dto.getRole());
             }
 
-            userRepo.save(user);
+            Users savedUser = userRepo.save(user);
 
-            return new ResponseDto(201, "User created successfully!");
+            UserDto userDto = Stream.of(savedUser)
+                    .map(u -> {
+                        UserDto dtoResponse = new UserDto();
+                        dtoResponse.setUserId(u.getUserId());
+                        dtoResponse.setFirstName(u.getFirstName());
+                        dtoResponse.setLastName(u.getLastName());
+                        dtoResponse.setEmail(u.getEmail());
+                        dtoResponse.setPhoneNumber(u.getPhoneNumber());
+                        dtoResponse.setProfileImageUrl(u.getProfileImageUrl());
+                        dtoResponse.setRole(u.getRole());
+                        dtoResponse.setCreatedAt(u.getCreatedAt());
+                        dtoResponse.setUpdatedAt(u.getUpdatedAt());
+                        return dtoResponse;
+                    })
+                    .findFirst()
+                    .orElse(null);
+
+
+            return new ResponseDto(201, "User created successfully!", userDto);
         } catch (Exception e) {
-            return new ResponseDto(500, "Error while creating user: " + e.getMessage());
+            return new ResponseDto(500, "Error while creating user: " + e.getMessage(), null);
         }
     }
 
@@ -58,6 +82,7 @@ public class UserService {
                     dto.setPassword(user.getPassword());
                     dto.setPhoneNumber(user.getPhoneNumber());
                     dto.setProfileImageUrl(user.getProfileImageUrl());
+                    dto.setRole(user.getRole());
                     dto.setCreatedAt(user.getCreatedAt());
                     dto.setUpdatedAt(user.getUpdatedAt());
                     return dto;
@@ -94,14 +119,19 @@ public class UserService {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
-    public Users getUserByEmail(String email) {
+    public Optional<Users> getUserByEmail(String email) {
         try {
-            Optional<Otp> user = userRepo.findByEmail(email);
-            return user.orElse(null).getUser();
+
+            Optional<Users> userOptional = userRepo.findByEmail(email);
+
+
+            return userOptional;
+
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while retrieving the user by email: " + e.getMessage(), e);
         }
     }
+
     public ResponseDto deleteUser(Long userId) {
         if (userRepo.existsById(userId)) {
             userRepo.deleteById(userId);
@@ -111,12 +141,6 @@ public class UserService {
         }
     }
 
-    public Optional<Optional<Users>> getUserByEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("Email cannot be null or empty");
-        }
 
-
-        return Optional.ofNullable(userRepo.findByEmail(email));
-    }
 }
+

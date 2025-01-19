@@ -40,7 +40,7 @@ public class SecurityFilter {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/auth/login", "/auth/users", "/products").permitAll()
+                        .requestMatchers("/auth/login", "/auth/users/**", "auth/users/register", "/products").permitAll()
 
                         .requestMatchers("/admin/product/tags/**").permitAll()
 
@@ -64,11 +64,10 @@ public class SecurityFilter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-
         configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -76,4 +75,5 @@ public class SecurityFilter {
 
         return source;
     }
+
 }

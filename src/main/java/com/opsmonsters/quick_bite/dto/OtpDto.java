@@ -11,6 +11,23 @@ public class OtpDto {
     private Date createdAt;
     private Date expiresAt;
     private Boolean isUsed;
+    private String email;
+
+    public Boolean getUsed() {
+        return isUsed;
+    }
+
+    public void setUsed(Boolean used) {
+        isUsed = used;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public OtpDto() {
     }

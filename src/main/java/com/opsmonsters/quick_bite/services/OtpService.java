@@ -1,83 +1,88 @@
 package com.opsmonsters.quick_bite.services;
 
-import com.opsmonsters.quick_bite.dto.OtpDto;
 import com.opsmonsters.quick_bite.dto.ResponseDto;
 import com.opsmonsters.quick_bite.models.Otp;
 import com.opsmonsters.quick_bite.repositories.OtpRepo;
-
+import com.opsmonsters.quick_bite.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class OtpService {
 
     @Autowired
     private OtpRepo otpRepo;
+    @Autowired
+    private UserRepo userRepo;
 
-    private static final int OTP_VALIDITY = 5 * 60 * 1000; // 5 minutes
-
-    public ResponseDto generateOtp(String userId) {
+    public ResponseDto generateOtp(String email) {
         try {
 
-            String otpCode = String.format("%06d", new Random().nextInt(999999));
+            Long userId = userRepo.findUserIdByEmail(email);
 
-
-            Otp otp = new Otp();
-            otp.setOtp(otpCode);
-            otp.setUserId(userId);
-            otp.setCreatedAt(new Date());
-            otp.setExpiresAt(new Date(System.currentTimeMillis() + OTP_VALIDITY));
-            otp.setIsUsed(false);
-
-        return new ResponseDto(200, "OTP generated and sent successfully", null);
-    }
-
-            otpRepo.save(otp);
-
-
-            OtpDto otpDto = new OtpDto();
-            otpDto.setOtp(otp.getOtp());
-            otpDto.setUserId(otp.getUserId());
-            otpDto.setCreatedAt(otp.getCreatedAt());
-            otpDto.setExpiresAt(otp.getExpiresAt());
-            otpDto.setIsUsed(otp.getIsUsed());
-
-            return new ResponseDto(201, "OTP generated successfully!", otpDto);
-        } catch (Exception e) {
-            return new ResponseDto(500, "Error while generating OTP: " + e.getMessage());
-        }
-    }
-
-    public ResponseDto validateOtp(String userId, String otpCode) {
-        try {
-
-            Optional<Otp> otpOptional = otpRepo.findTopByUserIdOrderByCreatedAtDesc(userId);
-
-            if (otpOptional.isPresent()) {
-                Otp otp = otpOptional.get();
-
-
-                if (!otp.getIsUsed() && otp.getOtp().equals(otpCode) && otp.getExpiresAt().after(new Date())) {
-
-                    otp.setIsUsed(true);
-                    otpRepo.save(otp);
-
-                    return new ResponseDto(200, "OTP is valid.");
-                }
+            if (userId == null) {
+                return new ResponseDto(400, "User not found with the provided email", null);
             }
 
-            return new ResponseDto(400, "Invalid or expired OTP.");
+            String otp = String.format("%06d", new SecureRandom().nextInt(999999));
+
+            Otp otpEntity = new Otp();
+            otpEntity.setUserId(userId);
+            otpEntity.setOtp(otp);
+            otpEntity.setCreatedAt(new Date());
+
+            otpEntity.setExpiresAt(new Date(System.currentTimeMillis() + 300000));
+            otpEntity.setIsUsed(false);
+
+            otpRepo.save(otpEntity);
+
+            return new ResponseDto(200, "OTP generated successfully", null);
+
         } catch (Exception e) {
-            return new ResponseDto(500, "Error while validating OTP: " + e.getMessage());
+
+            return new ResponseDto(500, "Error generating OTP: " + e.getMessage(), null);
         }
     }
 
-    public ResponseDto clearOtp(String userId) {
+
+    public ResponseDto validateOtp(long userId, String otp) {
+        try {
+
+            Optional<Otp> otpOptional = otpRepo.findByUserIdAndOtp(userId, otp);
+
+
+            if (otpOptional.isEmpty()) {
+                return new ResponseDto(400, "Invalid OTP", null);
+            }
+
+            Otp otpEntity = otpOptional.get();
+
+
+            if (otpEntity.getIsUsed()) {
+                return new ResponseDto(400, "OTP already used", null);
+            }
+
+            if (new Date().after(otpEntity.getExpiresAt())) {
+                return new ResponseDto(400, "OTP expired", null);
+            }
+
+
+            otpEntity.setIsUsed(true);
+            otpRepo.save(otpEntity);  // Save the updated OTP status
+
+            return new ResponseDto(200, "OTP validated successfully", null);
+
+        } catch (Exception e) {
+
+            return new ResponseDto(500, "Error while validating OTP: " + e.getMessage(), null);
+        }
+    }
+
+    public ResponseDto clearOtp(long userId) {
         try {
 
             otpRepo.deleteByUserId(userId);
@@ -87,3 +92,8 @@ public class OtpService {
         }
     }
 }
+
+
+
+
+
