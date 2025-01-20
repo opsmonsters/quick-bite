@@ -46,7 +46,7 @@ public class AuthServices {
 
     public ResponseDto userLogin(LoginDto loginDto) {
         try {
-
+        System.out.println(loginDto.getUsername());
             logger.info("Attempting to login with username: {}", loginDto.getUsername());
 
             authenticationManager.authenticate(
@@ -70,13 +70,13 @@ public class AuthServices {
             }
 
 
-            String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole());
-            logger.info("User logged in successfully: {}", user.getEmail());
+            String jwtToken = jwtService.generateToken(user.getUsername(), user.getRole());
+            logger.info("User logged in successfully: {}", user.getUsername());
 
             return new ResponseDto(200, jwtToken);
 
         } catch (BadCredentialsException badCredentials) {
-
+            badCredentials.printStackTrace(System.out);
             logger.error("Invalid credentials for username: {}", loginDto.getUsername());
             return new ResponseDto(403, "Username / password is incorrect");
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class AuthServices {
             Users user = userRepo.findByEmail(resetPasswordDto.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            Optional<Otp> otpOptional = otpRepo.findByUserIdAndOtp(user.getUserId(), resetPasswordDto.getOtp());
+            Optional<Otp> otpOptional = otpRepo.findByUserAndOtp(user, resetPasswordDto.getOtp());
             if (otpOptional.isEmpty()) {
                 logger.error("Invalid OTP for email: {}", resetPasswordDto.getEmail());
                 return new ResponseDto(403, "Invalid OTP.");
@@ -171,6 +171,7 @@ public class AuthServices {
             return new ResponseDto(500, "An internal error occurred.");
         }
     }
+
 
 }
 

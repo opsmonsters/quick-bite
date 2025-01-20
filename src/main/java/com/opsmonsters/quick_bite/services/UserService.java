@@ -93,11 +93,27 @@ public class UserService {
         Optional<Users> userOptional = userRepo.findById(userId);
         if (userOptional.isPresent()) {
             Users user = userOptional.get();
-            return new ResponseDto(200, user);
+
+
+            UserDto userDto = new UserDto();
+            userDto.setUserId(user.getUserId());
+            userDto.setFirstName(user.getFirstName());
+            userDto.setLastName(user.getLastName());
+            userDto.setEmail(user.getEmail());
+            userDto.setPhoneNumber(user.getPhoneNumber());
+            userDto.setProfileImageUrl(user.getProfileImageUrl());
+            userDto.setCreatedAt(user.getCreatedAt());
+            userDto.setUpdatedAt(user.getUpdatedAt());
+            userDto.setRole(user.getRole());
+
+
+            return new ResponseDto(200, "User found", userDto);
         } else {
             return new ResponseDto(404, "User with ID " + userId + " not found.");
         }
     }
+
+
 
     public ResponseDto updateUser(Long userId, UserDto dto) {
         Optional<Users> optionalUser = userRepo.findById(userId);

@@ -39,23 +39,16 @@ public class SecurityFilter {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/auth/login", "/auth/users/**", "auth/users/register", "/products").permitAll()
-
+                        .requestMatchers("/auth/**", "/otp/**").permitAll()
                         .requestMatchers("/admin/product/tags/**").permitAll()
-
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
                         .anyRequest().authenticated()
                 )
-
                 .sessionManagement(sess -> sess
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
@@ -75,5 +68,4 @@ public class SecurityFilter {
 
         return source;
     }
-
 }
