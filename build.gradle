@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.1'
+	id 'org.springframework.boot' version '3.0.0' // Updated version
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -18,27 +18,36 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot Starter Dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 
-	dependencies {
-		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-		implementation 'org.springframework.boot:spring-boot-starter-web'
-		implementation 'org.springframework.boot:spring-boot-starter-security'
-		implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-		implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-		implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	// JWT Dependencies
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+	// Springdoc OpenAPI Dependencies
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
-		runtimeOnly 'mysql:mysql-connector-java:8.0.26'
+	// Redis & Jackson Dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:2.18.1'
 
+	implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testImplementation 'io.projectreactor:reactor-test'
-	}
+	// Razorpay Java SDK
+	implementation 'com.razorpay:razorpay-java:1.4.3'
 
+	// MySQL JDBC Driver
+	runtimeOnly 'mysql:mysql-connector-java:8.0.26'
+
+	// Testing Dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
 }
-
-
-
 
 tasks.named('test') {
 	useJUnitPlatform()

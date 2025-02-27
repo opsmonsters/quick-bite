@@ -1,6 +1,6 @@
 package com.opsmonsters.quick_bite.dto;
 
-
+import java.util.List;
 
 public class ResponseDto {
     private int statusCode;
@@ -10,11 +10,6 @@ public class ResponseDto {
     public ResponseDto(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
-    }
-
-    public ResponseDto(int statusCode, Object data) {
-        this.statusCode = statusCode;
-        this.data = data;
     }
 
     public ResponseDto(int statusCode, String message, Object data) {
@@ -74,6 +69,7 @@ public class ResponseDto {
 
     public enum Status {
         SUCCESS(200),
+        CREATED(201),
         BAD_REQUEST(400),
         UNAUTHORIZED(401),
         NOT_FOUND(404),
@@ -89,7 +85,4 @@ public class ResponseDto {
             return code;
         }
     }
-
-
-    }
-
+}

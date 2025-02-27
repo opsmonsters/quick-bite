@@ -1,5 +1,6 @@
 package com.opsmonsters.quick_bite.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,10 +17,29 @@ public class Tag {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JsonBackReference
     private Set<Product> products = new HashSet<>();
 
 
+
+    public Tag() {}
+
+
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
+
+
+    public void addProduct(Product product) {
+        this.products.add(product);
+        product.getTags().add(this);
+    }
 
     public Long getTagId() {
         return tagId;
@@ -37,11 +57,8 @@ public class Tag {
         this.name = name;
     }
 
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.products = products;
+    public void removeProduct(Product product) {
+        this.products.remove(product);
+        product.getTags().remove(this);
     }
 }

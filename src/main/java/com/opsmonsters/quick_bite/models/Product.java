@@ -1,6 +1,7 @@
 package com.opsmonsters.quick_bite.models;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -14,12 +15,14 @@ public class Product {
 
     @Column(name = "name", nullable = false)
     private String name;
+    @Column (name="imageUrl")
+    private String imageUrl;
 
     @Column(name = "mrp", nullable = false)
-    private Double mrp;
+    private Double mrp = 0.0;
 
-    @Column(name = "discount")
-    private Double discount;
+    @Column(name = "discount", nullable = false)
+    private Double discount = 0.0;
 
     @Column(name = "description")
     private String description;
@@ -27,13 +30,26 @@ public class Product {
     @Column(name = "about")
     private String about;
 
-    @ManyToMany
+    @Column(name = "stock", nullable = false)
+    private Integer stock = 0;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "product_tags",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Product() {}
 
     public Long getProductId() {
         return productId;
@@ -52,19 +68,19 @@ public class Product {
     }
 
     public Double getMrp() {
-        return mrp;
+        return (mrp != null) ? mrp : 0.0;
     }
 
     public void setMrp(Double mrp) {
-        this.mrp = mrp;
+        this.mrp = (mrp != null) ? mrp : 0.0;
     }
 
     public Double getDiscount() {
-        return discount;
+        return (discount != null) ? discount : 0.0;
     }
 
     public void setDiscount(Double discount) {
-        this.discount = discount;
+        this.discount = (discount != null) ? discount : 0.0;
     }
 
     public String getDescription() {
@@ -83,11 +99,34 @@ public class Product {
         this.about = about;
     }
 
+    public Integer getStock() {
+        return (stock != null) ? stock : 0;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = (stock != null) ? stock : 0;
+    }
+
     public Set<Tag> getTags() {
         return tags;
     }
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.getProducts().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.getProducts().remove(this);
+    }
+
+
+    public Double getPrice() {
+        return Math.max(getMrp() - getDiscount(), 0.0);
     }
 }
