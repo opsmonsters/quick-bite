@@ -36,13 +36,13 @@ public class Order {
         this.paymentMethod = paymentMethod;
     }
 
-    // ✅ Auto-set order date before persisting
+
     @PrePersist
     protected void onCreate() {
         this.orderDate = LocalDateTime.now();
     }
 
-    // Getters and Setters
+
     public Long getOrderId() {
         return orderId;
     }

@@ -23,23 +23,23 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    // ✅ Set createdAt before persisting
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
 
-    // ✅ Constructors
+
     public Notification() {}
 
     public Notification(String message, String type, Users user) {
         this.message = message;
         this.type = type;
         this.user = user;
-        this.createdAt = LocalDateTime.now(); // Auto-set
+        this.createdAt = LocalDateTime.now();
     }
 
-    // ✅ Getters & Setters
+
     public Long getNotificationId() { return notificationId; }
     public String getMessage() { return message; }
     public String getType() { return type; }
